@@ -1,0 +1,97 @@
+{
+  "brand": "AI Radar · News desk",
+  "networks": [
+    {
+      "name": "ai_radar",
+      "front_man": "radar_desk",
+      "hocon": "./ai_radar.network.json",
+      "description": "Call the AI Radar desk: Elon Cache and Sam Alt-Tab, the crew of its radar room, find real AI resources for you (prompts, agent skills, MCP servers, open and free models, GitHub projects, papers, competitions), explain them, check what you heard, and put AI news on air.",
+      "tags": [
+        "agentified-website",
+        "ai-news",
+        "broadcast",
+        "news-desk",
+        "discovery"
+      ],
+      "sample_queries": [
+        "Elon, find me design skills for Claude.",
+        "Sam, is there a good prompt for code review?",
+        "Which free models can I use for an agent today?",
+        "I heard there's a new MCP server for GitHub. Can you check it and put it on air?",
+        "Sam, explain what the anthropics/skills repo does.",
+        "Elon, are there any AI hackathons open right now?"
+      ]
+    }
+  ],
+  "llm_router": {
+    "base_url": "https://api.otari.ai/api/v1",
+    "mock": false,
+    "byok_router": "https://api.otari.ai/api/v1"
+  },
+  "allowed_peers": [
+    "https://mcp.exa.ai",
+    "https://huggingface.co",
+    "https://mcp.deepwiki.com",
+    "https://mcp.context7.com",
+    "https://deadline-desk-agent.vercel.app"
+  ],
+  "peer_policy": {
+    "mode": "closed",
+    "deny_origins": [],
+    "note": "Local agents, page-local actions, four public MCP servers: Exa (web search), Hugging Face (Hub search), DeepWiki (GitHub repositories) and Context7 (library docs), and one partner site, Deadline Desk (open contests). The visitor approves the research servers on a card, once per visit, and Deadline Desk on its own card; a question makes at most four research calls."
+  },
+  "agent_mcp": {
+    "protocol": "nsdeploy-agent-mcp/v1",
+    "network": "ai_radar",
+    "front_man": "radar_desk",
+    "available": false,
+    "reason": "This is a static bundle; a public MCP facade requires an application host."
+  },
+  "theme": {
+    "primary": "#1f6f4c"
+  },
+  "linking": {
+    "protocol": "nsdeploy-link/v1",
+    "exports": [
+      {
+        "network": "ai_radar",
+        "front_man": "radar_desk",
+        "aliases": [
+          "ai_radar",
+          "radar_desk"
+        ],
+        "url": "ai_radar"
+      }
+    ],
+    "imports": [],
+    "link_updates": {
+      "mode": "browser-local"
+    }
+  },
+  "deployment": {
+    "mode": "static",
+    "self_contained_runtime": true,
+    "browser_mock": false,
+    "direct_byok": true,
+    "direct_mcp_requires_cors": true,
+    "public_mcp_facade": false
+  },
+  "actions": {
+    "version": 1,
+    "module": "./studio-actions.js",
+    "bridge": "./bridge/action-bridge.html",
+    "agentTools": [
+      "get_studio_state",
+      "scan_raw_news",
+      "search_news",
+      "find_prompts",
+      "find_skills",
+      "find_tools",
+      "find_papers",
+      "broadcast_story",
+      "set_channel",
+      "stop_broadcast",
+      "save_scripts"
+    ]
+  }
+}

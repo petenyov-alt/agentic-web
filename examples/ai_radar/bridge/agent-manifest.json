@@ -1,0 +1,10 @@
+{
+  "networks": [
+    {
+      "name": "ai_radar"
+    }
+  ],
+  "actions": {
+    "version": 1
+  }
+}

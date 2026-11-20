@@ -1,0 +1,18 @@
+{
+  "protocol": "nsdeploy-link/v1",
+  "exports": [
+    {
+      "network": "ai_radar",
+      "front_man": "radar_desk",
+      "aliases": [
+        "ai_radar",
+        "radar_desk"
+      ],
+      "url": "ai_radar"
+    }
+  ],
+  "imports": [],
+  "link_updates": {
+    "mode": "browser-local"
+  }
+}

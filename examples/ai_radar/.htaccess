@@ -1,0 +1,66 @@
+# AI Radar: Apache settings for static hosting (DonWeb and similar).
+
+DirectoryIndex index.html
+Options -Indexes
+
+# The site's AI key lives one folder above this one, but never serve a copy by mistake.
+# radar-ai.php is code the editor and the writer include, never a page of its own.
+<IfModule mod_authz_core.c>
+  <FilesMatch "^(ai-radar-secret.*\.php|.*\.example\.php|radar-ai\.php)$">
+    Require all denied
+  </FilesMatch>
+</IfModule>
+
+# MIME types for the agent files and modules.
+<IfModule mod_mime.c>
+  AddType application/json .json
+  AddType text/plain .hocon
+  AddType text/javascript .js .mjs
+  AddType image/svg+xml .svg
+  AddCharset utf-8 .json .hocon .js .mjs .html .css
+</IfModule>
+
+<IfModule mod_headers.c>
+  # Public agent files: other agent sites and tools read these from their own origin.
+  <FilesMatch "^(agent-manifest\.json|ai_radar\.network\.json|ai_radar\.hocon|links\.json|agent-mcp\.json|nsdeploy\.json|nsdeploy-agent\.json)$">
+    Header always set Access-Control-Allow-Origin "*"
+    Header always set Access-Control-Allow-Methods "GET, OPTIONS"
+    Header always set Access-Control-Allow-Headers "Content-Type"
+    Header always set Cache-Control "public, max-age=300"
+  </FilesMatch>
+
+  # The runtime's sandbox for coded tools runs with no network and no extra scripts.
+  <Files "sandbox-worker.js">
+    Header always set Content-Security-Policy "default-src 'none'; script-src blob:; connect-src 'none'; worker-src 'none'"
+  </Files>
+
+  # Safe defaults for the page. No X-Frame-Options: other agent sites load bridge/ in a frame.
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  # Once on HTTPS, browsers keep to it for a year.
+  Header always set Strict-Transport-Security "max-age=31536000" env=HTTPS
+</IfModule>
+
+# Answer CORS preflight requests for the public agent files.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{REQUEST_METHOD} OPTIONS
+  RewriteRule ^(agent-manifest\.json|ai_radar\.network\.json|ai_radar\.hocon|links\.json|agent-mcp\.json|\.well-known/.*)$ - [R=204,L]
+
+  # Not for visitors: the tests, design-tool output and any hidden folder except .well-known.
+  # (Leave them out of the upload too.)
+  RewriteRule ^(tests|docs|\.taste-skill)(/|$) - [R=404,L]
+  RewriteRule (^|/)\.(?!well-known(/|$)) - [R=404,L]
+
+  # The site's AI is called at llm-proxy.php/v1/chat/completions. On a host that does not pass
+  # the part after ".php" on to PHP (PATH_INFO), the same address still reaches the proxy.
+  RewriteRule ^llm-proxy\.php/(.+)$ llm-proxy.php?route=/$1 [L,QSA]
+</IfModule>
+
+# Use HTTPS in production: the visitor's API key is stored in this site's browser storage.
+<IfModule mod_rewrite.c>
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteCond %{HTTP_HOST} !^(localhost|127\.0\.0\.1)
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+</IfModule>

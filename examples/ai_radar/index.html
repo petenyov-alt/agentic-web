@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Radar</title>
+  <meta name="description" content="AI Radar: a live desk for people who build with AI. New models, local AI, tools, skills and MCP servers, free resources, prompts, AI security, research, competitions with deadlines and the open agentic web, read aloud from a studio desk by Elon Cache and Sam Alt-Tab. Ping the desk to ask them anything.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-power="off" data-muted="false" data-view="radar">
+  <div class="shell">
+    <!-- Icon rail: the product's mark and its five screens -->
+    <nav class="rail" aria-label="AI Radar">
+      <a class="rail-mark" href="#radar" aria-label="AI Radar home">
+        <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="12" cy="12" r="5.5" fill="none" stroke="currentColor" stroke-width="1" opacity=".55"/>
+          <path d="M12 12 L12 2 A10 10 0 0 1 20.7 7 Z" fill="currentColor" opacity=".45"/>
+          <circle cx="16.5" cy="9" r="1.4" fill="currentColor"/>
+        </svg>
+      </a>
+      <a class="rail-item" href="#radar" data-view="radar" title="Radar" aria-label="Radar">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 12 L18 6" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>
+        <span>Radar</span>
+      </a>
+      <a class="rail-item" href="#find" data-view="find" title="Find prompts, skills and tools" aria-label="Find">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M15 15l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span>Find</span>
+      </a>
+      <a class="rail-item" href="#prompts" data-view="prompts" title="Prompts" aria-label="Prompts">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 5h14v10H9l-4 4z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 9h6M9 12h4" stroke="currentColor" stroke-width="1.5"/></svg>
+        <span>Prompts</span>
+      </a>
+      <a class="rail-item" href="#events" data-view="events" title="Competitions" aria-label="Competitions">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 4h10v4a5 5 0 0 1-10 0z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 13v4M8 20h8M7 6H4a3 3 0 0 0 3 3M17 6h3a3 3 0 0 1-3 3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+        <span>Events</span>
+      </a>
+      <a class="rail-item" href="#sources" data-view="sources" title="Sources" aria-label="Sources">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 18a1 1 0 1 0 0 .01M5 11a8 8 0 0 1 8 8M5 4a15 15 0 0 1 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span>Sources</span>
+      </a>
+    </nav>
+
+    <main class="canvas">
+      <header class="title-row">
+        <div class="title-text">
+          <h1>AI Radar</h1>
+          <p class="tagline">Live AI news read by two anchors, who also answer your questions.</p>
+        </div>
+        <div class="title-actions">
+          <label class="search">
+            <span class="sr-only">Search the feed</span>
+            <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M16 16l4 4" stroke="currentColor" stroke-width="1.5"/></svg>
+            <input id="search" type="search" placeholder="Search models, tools, papers…" autocomplete="off">
+          </label>
+        </div>
+      </header>
+
+      <!-- ===== Radar: the studio deck, then the feed ===== -->
+      <section id="view-radar" class="view" aria-label="Radar">
+        <section class="deck" aria-labelledby="brief-title">
+          <div class="deck-screen">
+            <h2 id="brief-title" class="sr-only">Alt-Cache studio</h2>
+            <div id="monitor" class="monitor" data-channel="all">
+              <div class="screen">
+                <canvas id="anchor-canvas" class="anchor-canvas" width="320" height="180"
+                  role="img" aria-label="Animated AI Radar studio with Sam Alt-Tab and Elon Cache at a broadcast desk under the studio monitor"></canvas>
+                <a id="story-bug" class="story-bug" href="#" target="_blank" rel="noopener noreferrer" hidden>
+                  <span id="bug-kicker" class="bug-kicker">ON RADAR</span>
+                  <span id="bug-source" class="bug-source"></span>
+                </a>
+                <div class="channel-osd" aria-hidden="true">
+                  <span class="mute-osd">Muted</span>
+                  <span id="volume-osd" class="volume-osd" hidden><span>Volume</span><span id="volume-bars" class="volume-bars"></span></span>
+                </div>
+                <div class="captions-wrap">
+                  <div id="prompter-text" class="captions" aria-live="off"></div>
+                </div>
+              </div>
+              <button id="screen-off" class="screen-off" type="button" aria-label="Play the briefing">
+                <span class="play-mark" aria-hidden="true"></span>
+                <span>Play the briefing</span>
+              </button>
+            </div>
+
+            <!-- On air: what plays, who reads it, and the TV's three buttons -->
+            <div class="onair">
+              <p id="tally" class="tally" data-mode="off"><span class="tally-lamp" aria-hidden="true"></span><span id="tally-label">OFF AIR</span></p>
+              <div class="onair-now">
+                <p id="now-title" class="now-title">Press play and the briefing starts.</p>
+                <p id="now-kicker" class="now-kicker">On air</p>
+              </div>
+              <div class="transport">
+                <button id="btn-power" type="button" class="btn-primary" aria-pressed="false">Play briefing</button>
+                <button id="btn-next" type="button" class="btn-ghost">Next story</button>
+                <button id="btn-mute" type="button" class="btn-ghost" aria-pressed="false">Sound on</button>
+              </div>
+            </div>
+            <p id="anchor-status" class="sr-only" aria-live="polite">The briefing is off.</p>
+
+            <div class="tuner">
+              <div id="channel-tabs" class="tabs" role="tablist" aria-label="Channels">
+                <button type="button" role="tab" data-topic="all" aria-selected="true"><span class="ch">01</span>All</button>
+                <button type="button" role="tab" data-topic="models" aria-selected="false"><span class="ch">02</span>Models</button>
+                <button type="button" role="tab" data-topic="local" aria-selected="false"><span class="ch">03</span>Local AI</button>
+                <button type="button" role="tab" data-topic="tools" aria-selected="false"><span class="ch">04</span>Tools &amp; skills</button>
+                <button type="button" role="tab" data-topic="projects" aria-selected="false"><span class="ch">05</span>GitHub projects</button>
+                <button type="button" role="tab" data-topic="free" aria-selected="false"><span class="ch">06</span>Free &amp; open</button>
+                <button type="button" role="tab" data-topic="prompts" aria-selected="false"><span class="ch">07</span>Prompts</button>
+                <button type="button" role="tab" data-topic="security" aria-selected="false"><span class="ch">08</span>Security</button>
+                <button type="button" role="tab" data-topic="research" aria-selected="false"><span class="ch">09</span>Research</button>
+                <button type="button" role="tab" data-topic="events" aria-selected="false"><span class="ch">10</span>Competitions</button>
+                <button type="button" role="tab" data-topic="agentic" aria-selected="false"><span class="ch">11</span>Agentic web</button>
+              </div>
+              <button id="tabs-more" type="button" class="tabs-more" aria-label="Show more channels">
+                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <section id="assistant" class="assistant desk-dock" data-open="false" aria-labelledby="assistant-heading">
+            <header class="dock-head">
+              <h2 id="assistant-heading"><span class="desk-dot" aria-hidden="true"></span>Call the desk</h2>
+              <p class="dock-sub">Ask Sam or Elon to find a model, a skill or an MCP server, explain a repo, or check something you heard.</p>
+            </header>
+            <div id="agent-app">
+              <div data-ns-slot="chat"></div>
+              <ul class="dock-chips" aria-label="Questions to try">
+                <li><button id="btn-ask-story" type="button" disabled>Ask about this story</button></li>
+                <li><button id="btn-ask-claim" type="button">Check a claim</button></li>
+                <li><button type="button" data-ask="Elon, find me design skills for Claude.">Find design skills</button></li>
+                <li><button id="btn-ask-repo" type="button">Explain a repo</button></li>
+              </ul>
+              <p class="desk-foot">
+                <span id="desk-activity" class="desk-activity" role="status">Standing by</span>
+                <button id="btn-how" type="button" class="link-btn" aria-haspopup="dialog" aria-controls="how-it-works">How it works</button>
+              </p>
+
+              <!-- How it works: the agents, the research servers, the newsroom and the AI model -->
+              <dialog id="how-it-works" class="how" aria-labelledby="how-title">
+                <div class="how-head">
+                  <h2 id="how-title">How it works</h2>
+                  <button type="button" class="btn-ghost how-close" data-close>Close</button>
+                </div>
+                <p class="how-lede">Sam Alt-Tab and Elon Cache read the feed aloud and answer your questions. They are AI parody characters: they echo the speaking style of two famous founders, but they are not those people and nothing here is something they said.</p>
+                <div class="how-grid">
+                  <section class="how-card">
+                    <h3>The agents</h3>
+                    <p>Six agents share the work behind the desk. The one working now lights up.</p>
+                    <ul id="agent-strip" class="agent-strip" aria-label="Agents">
+                      <li data-agent="radar_desk">radar_desk</li>
+                      <li data-agent="ai_news_scanner">ai_news_scanner</li>
+                      <li data-agent="desk_verifier">desk_verifier</li>
+                      <li data-agent="web_researcher">web_researcher</li>
+                      <li data-agent="repo_guide">repo_guide</li>
+                      <li data-agent="broadcast_script_writer">broadcast_script_writer</li>
+                    </ul>
+                    <details class="agent-activity">
+                      <summary>What the agents are doing</summary>
+                      <div data-ns-slot="agents"></div>
+                    </details>
+                  </section>
+                  <section class="how-card">
+                    <h3>Research servers</h3>
+                    <p>Four public MCP servers. The desk asks you before it uses one.</p>
+                    <ul id="mcp-strip" class="agent-strip mcp-strip" aria-label="MCP servers">
+                      <li data-mcp="mcp.exa.ai">Exa</li>
+                      <li data-mcp="huggingface.co">Hugging Face</li>
+                      <li data-mcp="mcp.deepwiki.com">DeepWiki</li>
+                      <li data-mcp="mcp.context7.com">Context7</li>
+                    </ul>
+                    <label class="dock-trust">
+                      <input id="approve-research" type="checkbox">
+                      <span>Let them use these without asking each time, for this visit</span>
+                    </label>
+                  </section>
+                  <section class="how-card">
+                    <h3>The newsroom</h3>
+                    <p>57 sources, an AI editor that keeps real news and drops adverts, and a writer that scripts the anchors. Every number is checked against its story.</p>
+                    <dl class="readout">
+                      <div><dt>Channel</dt><dd><span id="channel-code" class="mono">CH 01</span><span id="channel-name" class="readout-name">All AI</span></dd></div>
+                      <div><dt>Live items</dt><dd id="deck-live" class="mono">0</dd></div>
+                      <div><dt>Aired</dt><dd id="deck-aired" class="mono">0</dd></div>
+                      <div><dt>Last scan</dt><dd id="deck-scan" class="mono">--:--</dd></div>
+                    </dl>
+                    <ul class="voices" aria-label="The anchors">
+                      <li id="voice-sam" class="voice voice-sam" data-on="false">
+                        <span class="voice-lamp" aria-hidden="true"></span>
+                        <span class="voice-name">Sam</span>
+                        <span class="voice-role">Sam Alt-Tab · Models, numbers, security</span>
+                        <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+                      </li>
+                      <li id="voice-elon" class="voice voice-elon" data-on="false">
+                        <span class="voice-lamp" aria-hidden="true"></span>
+                        <span class="voice-name">Elon</span>
+                        <span class="voice-role">Elon Cache · Tools, open source, builders</span>
+                        <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+                      </li>
+                    </ul>
+                  </section>
+                  <section class="how-card">
+                    <h3>The AI model</h3>
+                    <p id="assistant-status" role="status">Connecting the assistant… If this message stays, the assistant could not load. The radar still works on its own.</p>
+                    <p class="assistant-note">Your messages and the stories the assistant reads go to the AI provider you choose in the settings below, using your own key.</p>
+                    <label class="producer" id="producer-option">
+                      <input id="producer-toggle" type="checkbox">
+                      <span><strong>AI producer</strong>: the agents write the upcoming stories in the background (uses your key).</span>
+                    </label>
+                    <p id="producer-status" class="producer-status" role="status"></p>
+                    <div class="how-actions"></div>
+                    <div data-ns-slot="header"></div>
+                    <div data-ns-slot="settings"></div>
+                  </section>
+                </div>
+              </dialog>
+            </div>
+          </section>
+        </section>
+
+        <div class="grid grid-home">
+          <section id="feed-card" class="card card-feed" aria-labelledby="feed-title">
+            <div class="card-head">
+              <h2 id="feed-title">On this channel</h2>
+              <span id="feed-count" class="card-meta">0 items</span>
+            </div>
+            <p id="finding" class="finding" aria-live="polite">Scanning the sources…</p>
+            <table class="feed">
+              <thead>
+                <tr><th scope="col">Story</th><th scope="col">Channel and source</th><th scope="col" class="num">Age</th><th scope="col"><span class="sr-only">Actions</span></th></tr>
+              </thead>
+              <tbody id="feed-rows"></tbody>
+            </table>
+            <button id="feed-more" type="button" class="btn-ghost feed-more" hidden>Show more</button>
+          </section>
+
+          <div id="side-col" class="side">
+            <section class="card card-deadlines" aria-labelledby="deadlines-title">
+              <div class="card-head">
+                <h2 id="deadlines-title">Closing soon</h2>
+                <a class="card-link" href="#events">All competitions</a>
+              </div>
+              <ol id="deadlines" class="deadlines"></ol>
+              <div class="always">
+                <h3>Always open</h3>
+                <ul>
+                  <li><a href="https://www.kaggle.com/competitions" target="_blank" rel="noopener noreferrer">Kaggle Competitions</a><span>ML challenges all year</span></li>
+                  <li><a href="https://devpost.com/hackathons" target="_blank" rel="noopener noreferrer">Devpost hackathons</a><span>Online and in person</span></li>
+                  <li><a href="https://cognizant-agenticweb.devpost.com/" target="_blank" rel="noopener noreferrer">Open Agentic Web Challenge</a><span class="mono">Closes 2027-01-11</span></li>
+                </ul>
+              </div>
+            </section>
+            <section class="card card-picks" aria-labelledby="picks-title">
+              <div class="card-head">
+                <h2 id="picks-title">Prompts to copy</h2>
+                <a class="card-link" href="#prompts">Library</a>
+              </div>
+              <div id="prompt-picks" class="prompt-picks"></div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Find ===== -->
+      <section id="view-find" class="view" aria-labelledby="find-title" hidden>
+        <div class="view-head">
+          <h2 id="find-title">Find prompts, skills and tools</h2>
+          <p class="view-note">Real items from public directories, each with its source. AI Radar writes none of them.</p>
+        </div>
+        <form id="find-form" class="find-form" role="search">
+          <label for="find-query" class="sr-only">What are you looking for?</label>
+          <input id="find-query" type="search" placeholder="design skills, code review prompt, GitHub MCP server…" autocomplete="off" maxlength="120">
+          <button type="submit" class="btn-primary">Search</button>
+        </form>
+        <div id="find-kinds" class="chips" role="group" aria-label="What to find"></div>
+        <p id="find-hint" class="view-note"></p>
+        <p id="find-status" class="find-status" aria-live="polite"></p>
+        <div id="find-results" class="find-list"></div>
+      </section>
+
+      <!-- ===== Prompts ===== -->
+      <section id="view-prompts" class="view" aria-labelledby="prompts-title" hidden>
+        <div class="view-head">
+          <h2 id="prompts-title">Prompt library</h2>
+          <p class="view-note">Practical prompts to copy. Replace the parts in [square brackets]. Security prompts are for testing your own systems.</p>
+          <p class="view-note"><a href="#find" data-find="prompts:coding agent">Search the web for more prompts</a></p>
+        </div>
+        <div id="prompt-groups" class="chips" role="group" aria-label="Prompt groups"></div>
+        <div id="prompt-list" class="prompt-list"></div>
+      </section>
+
+      <!-- ===== Competitions ===== -->
+      <section id="view-events" class="view" aria-labelledby="events-title" hidden>
+        <div class="view-head">
+          <h2 id="events-title">Competitions and hackathons</h2>
+          <p id="events-count" class="view-note">0 open with a deadline</p>
+        </div>
+        <div class="card">
+          <table class="feed events">
+            <thead><tr><th scope="col">Competition</th><th scope="col">Dates</th><th scope="col" class="num">Days left</th><th scope="col" class="num">Prizes</th><th scope="col" class="num">Registered</th></tr></thead>
+            <tbody id="events-rows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===== Sources ===== -->
+      <section id="view-sources" class="view" aria-labelledby="sources-title" hidden>
+        <div class="view-head view-head-row">
+          <div>
+            <h2 id="sources-title">Sources</h2>
+            <p id="sources-count" class="view-note">0 of 0 sources answered</p>
+          </div>
+          <button id="btn-rescan" type="button" class="btn-ghost">Scan all again</button>
+        </div>
+        <div class="card">
+          <table class="feed sources">
+            <thead><tr><th scope="col">Channel</th><th scope="col">Source</th><th scope="col">Status</th><th scope="col">Read via</th><th scope="col" class="num">Kept</th><th scope="col" class="num">Last scan</th></tr></thead>
+            <tbody id="sources-rows"></tbody>
+          </table>
+        </div>
+        <p class="view-note">Items are cleaned for reading aloud, older than 60 days dropped, and a safety screen removes adult, abusive and jailbreak material. Every item links to its source.</p>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="script.js"></script>
+  <script type="module" src="site.js"></script>
+</body>
+</html>

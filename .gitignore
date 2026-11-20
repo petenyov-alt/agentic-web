@@ -9,3 +9,20 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+
+# AI Radar: the site's Otari key must never be committed (it lives one folder above the web folder).
+ai-radar-secret.php
+examples/ai-radar-secret.php
+# The studio voices' cache of made sentences (tts-proxy.php), next to the key file.
+ai-radar-voice-cache/
+# The news editor's verdicts (editor.php), next to the key file.
+ai-radar-editor-cache/
+# The script writer's scripts (writer.php), next to the key file.
+ai-radar-writer-cache/
+# The proxies' rate-limit counters and the feed cache, next to the key file.
+ai-radar-state/
+# Design-tool output (screenshots, reports with local paths): never committed or uploaded.
+.taste-skill/
+# The audit kit (agent skills, rules, briefs) and its reports: tooling, never shipped.
+.agents/
+audit/
