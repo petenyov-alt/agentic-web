@@ -324,7 +324,8 @@ test("the editor files each story under the channel it is about, and drops sensi
   assert.equal(v.lawsuit.keep, false);
   assert.equal(v.odd.channel, null, "A channel the station does not have is ignored.");
   const rules = or.seen[0].body.messages[0].content;
-  assert.match(rules, /parodies of Elon Musk and Sam Altman/);
+  assert.match(rules, /gossip about a person's private life/);
+  assert.doesNotMatch(rules, /parod|Musk|Altman/);
   assert.match(rules, /sexual content or sexualised images; religion; elections or partisan politics; war; a death, suicide or abuse/);
   assert.match(rules, /not by the outlet that carried it/);
 });

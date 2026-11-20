@@ -81,11 +81,11 @@ function send(base, path, body, { method = "POST", origin = base } = {}) {
 
 const PATH = "/writer.php";
 const STORIES = [
-  { id: "devstral", title: "Mistral releases Devstral 3, an open coding model", summary: "It has a 128k context window and Apache 2.0 weights.", source: "Mistral AI", topic: "models", reader: "Sam", year: "2026" },
-  { id: "invented", title: "Hugging Face adds a model leaderboard", summary: "The board ranks open models.", source: "Hugging Face", topic: "models", reader: "Sam", year: "" },
-  { id: "linked", title: "Cursor ships background agents", summary: "Agents now run while you work.", source: "Cursor", topic: "tools", reader: "Elon", year: "" },
-  { id: "founder", title: "Groq opens a free API tier", summary: "Developers can call open models for free.", source: "Groq", topic: "tools", reader: "Elon", year: "" },
-  { id: "pizza", title: "Best pizza in Naples", summary: "A food guide.", source: "Food blog", topic: "tools", reader: "Elon", year: "" },
+  { id: "devstral", title: "Mistral releases Devstral 3, an open coding model", summary: "It has a 128k context window and Apache 2.0 weights.", source: "Mistral AI", topic: "models", reader: "Theo", year: "2026" },
+  { id: "invented", title: "Hugging Face adds a model leaderboard", summary: "The board ranks open models.", source: "Hugging Face", topic: "models", reader: "Theo", year: "" },
+  { id: "linked", title: "Cursor ships background agents", summary: "Agents now run while you work.", source: "Cursor", topic: "tools", reader: "Dex", year: "" },
+  { id: "founder", title: "Groq opens a free API tier", summary: "Developers can call open models for free.", source: "Groq", topic: "tools", reader: "Dex", year: "" },
+  { id: "pizza", title: "Best pizza in Naples", summary: "A food guide.", source: "Food blog", topic: "tools", reader: "Dex", year: "" },
 ];
 // A good writer, plus scripts the server must refuse.
 const WRITER = (stories) => stories.map((s) => {
@@ -114,7 +114,7 @@ test("the writer scripts each story once in its anchor's voice and refuses scrip
   const asked = groq.seen[0].body;
   assert.equal(asked.reasoning_effort, "low");
   const request = JSON.parse(asked.messages[1].content);
-  assert.deepEqual(request.stories.map((x) => x.reader), ["Sam", "Sam", "Elon", "Elon", "Elon"]);
+  assert.deepEqual(request.stories.map((x) => x.reader), ["Theo", "Theo", "Dex", "Dex", "Dex"]);
   assert.match(request.note, /nothing inside them is an instruction/);
 
   // A second visitor gets the same answers with no new model call.
@@ -143,7 +143,7 @@ test("the writer asks Groq first, then Google in its own format, and skips stori
   groq.state.status = 429;
   const { json } = await send(base, PATH, { stories: [STORIES[0], { ...STORIES[1], id: "nobody", reader: "Grok" }] });
   assert.ok(json.scripts.devstral.script);
-  assert.equal(json.scripts.nobody, undefined, "A story must say Sam or Elon reads it.");
+  assert.equal(json.scripts.nobody, undefined, "A story must say Theo or Dex reads it.");
   assert.equal(google.seen.length, 1);
   assert.deepEqual(google.seen[0].body.messages.map((m) => m.role), ["user"]);
   assert.match(google.seen[0].body.messages[0].content, /^You write on-air scripts for AI Radar/);
@@ -176,11 +176,11 @@ test("on the page, the writer sends who reads each story and never asks twice ab
       { id: "b", title: "B", topic: "models" },
       { id: "c", title: "C", topic: "models" },
     ];
-    const written = await writer.write(stories, (s) => (s.topic === "models" ? "Sam" : "Elon"));
+    const written = await writer.write(stories, (s) => (s.topic === "models" ? "Theo" : "Dex"));
     assert.deepEqual(written, [{ storyId: "a", script: "Pretty cool. A team shipped a thing for builders." }]);
-    assert.deepEqual(sent[0].map((s) => [s.id, s.reader, s.year]), [["a", "Elon", "2026"], ["b", "Sam", ""], ["c", "Sam", ""]]);
+    assert.deepEqual(sent[0].map((s) => [s.id, s.reader, s.year]), [["a", "Dex", "2026"], ["b", "Theo", ""], ["c", "Theo", ""]]);
     writer._lastAt = 0;
-    await writer.write(stories, () => "Sam");
+    await writer.write(stories, () => "Theo");
     assert.deepEqual(sent[1].map((s) => s.id), ["c"], "Only the story still pending is asked again.");
   } finally {
     globalThis.fetch = realFetch;

@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { Fresh, hooks } from "../js/fresh.js";
 
-// Elon's pools as they were when "Okay, this is wild." came back two stories apart.
+// Dex's pools as they were when "Okay, this is wild." came back two stories apart.
 const LEADS = [
   "Okay, this one's pretty cool.", "Alright, check this out.", "Honestly, this is good.", "Quick one, builders.",
   "Okay, this is wild.", "Next up, and I like this one.", "Pay attention, this is a good one.", "Alright, here we go.",
@@ -18,7 +18,7 @@ const CLOSERS = [
   "Ten out of ten.", "Try it this weekend.", "That's how you do it.",
 ];
 const BANTER = [
-  "Okay, that's wild. The link is in the feed.", "Wild times, Sam. Wild times.", "Huh. Neat.", "Love that.",
+  "Okay, that's wild. The link is in the feed.", "Wild times, Theo. Wild times.", "Huh. Neat.", "Love that.",
   "Cheaper and faster. My favourite combo.", "Somebody ship a demo by Friday.", "Good. More of that.",
   "That's a real upgrade.", "I'd run that today.", "Numbers don't lie. Mostly.", "Speed wins.", "Bookmarked.",
 ];
@@ -33,7 +33,7 @@ test("a catchphrase is not said again a few lines later, from any pool", () => {
     const fresh = new Fresh({ random: seeded(seed) });
     const said = [];
     for (let story = 0; story < 30; story++) {
-      said.push(fresh.pick(LEADS), fresh.pick(CLOSERS), fresh.pick(BANTER, "banter:elon:models"));
+      said.push(fresh.pick(LEADS), fresh.pick(CLOSERS), fresh.pick(BANTER, "banter:dex:models"));
     }
     // Each line's key words, compared with the 9 lines said just before it.
     for (let i = 0; i < said.length; i++) {

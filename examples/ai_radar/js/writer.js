@@ -1,5 +1,5 @@
 // The script writer, on the page's side: it sends the next stories to writer.php, where an AI
-// writes what Elon and Sam say about each one, in their own voices, once for the whole site.
+// writes what Dex and Theo say about each one, in their own voices, once for the whole site.
 // The page sends only the feed's own data and takes back what the server wrote; it cannot put
 // words on air. Without the writer (a static host, no key, a model that does not answer) the
 // anchors read the editor's line with their own lead-ins and closers, as before.
@@ -37,7 +37,7 @@ export class ScriptWriter {
   }
 
   /**
-   * Send up to WRITER_BATCH stories, each with who reads it ("Sam" or "Elon"), and resolve with
+   * Send up to WRITER_BATCH stories, each with who reads it ("Theo" or "Dex"), and resolve with
    * the scripts written: [{storyId, script}]. Stories the writer skipped are not asked again.
    */
   async write(stories, readerOf) {

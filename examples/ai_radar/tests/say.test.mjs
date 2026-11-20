@@ -26,7 +26,7 @@ test("a Hugging Face title, already spaced, is said the same way", () => {
 
 test("ordinary words, names, dates, money and units are left as they are", () => {
   for (const text of [
-    "Sam Alt-Tab and Elon Cache, at the Alt-Cache desk.",
+    "Theo Sweep and Dex Ping, in the radar room.",
     "A state-of-the-art, open-source model with real-time voice.",
     "Released 2026-11-19, it runs 24/7.",
     "It raised $40B in 2025, up 20-30%.",
@@ -59,8 +59,8 @@ test("the studio voices get the spoken words, both on air and when warming up", 
   try {
     const voice = new VoiceOver();
     voice.cloud = { url: "tts-proxy.php", failures: 0, offUntil: 0 };
-    await voice._clip("Meet GPT-OSS-20B today.", "elon");
-    await voice.warm([{ anchor: "sam", text: "Meet GPT-OSS-20B today." }]);
+    await voice._clip("Meet GPT-OSS-20B today.", "dex");
+    await voice.warm([{ anchor: "theo", text: "Meet GPT-OSS-20B today." }]);
     assert.deepEqual(posted, ["Meet GPT OSS 20 B today.", "Meet GPT OSS 20 B today."], "The same words on air and in the server's cache.");
   } finally {
     globalThis.fetch = realFetch;

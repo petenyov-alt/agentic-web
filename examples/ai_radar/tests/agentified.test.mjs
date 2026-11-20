@@ -21,7 +21,7 @@ const WARM_UP_MS = 1300;   // the CRT warm-up before the first story plays
 globalThis.document = StubDocument.fromHtml(await readFile(new URL("../index.html", import.meta.url), "utf8"), `${BASE}/`);
 const { registerActions } = await import("../studio-actions.js");
 const { App, questionFor, HOLD, voiceLines, isSerious, leadOf } = await import("../script.js");
-const { PixelAnchor, STUDIO_MODES, SAM_HABITS, ELON_HABITS, DUO_HABITS, FACIAL_EXPRESSIONS_DB, MOVEMENTS_DB, VISEMES, visemesForWord } = await import("../js/anchor.js");
+const { PixelAnchor, STUDIO_MODES, THEO_HABITS, DEX_HABITS, DUO_HABITS, FACIAL_EXPRESSIONS_DB, MOVEMENTS_DB, VISEMES, visemesForWord } = await import("../js/anchor.js");
 const { AssistantMount, LiveDesk, Producer } = await import("../site.js");
 
 const LISTEN_AFTER_MS_OK = (page) => page._listenMs() <= 3000;
@@ -102,18 +102,18 @@ class StudioTest {
     assert.ok(rules.includes("Only if CONFIRMED, offer to put it on air"));
     assert.ok(rules.includes("AI news: ask ai_news_scanner"));
     // The persona: both of the crew, who answers, how they speak and think.
-    assert.ok(rules.includes("You are Elon and Sam, the crew of AI Radar's radar room; together, Alt-Cache."));
+    assert.ok(rules.includes("You are Dex and Theo, the night crew of AI Radar's radar room."));
     assert.ok(rules.includes("Start each paragraph with the speaker's name and a colon"));
     assert.ok(rules.includes("never write a prompt, skill, tool, link or fact from memory"));
     assert.ok(rules.includes("Never claim to be human"));
-    assert.ok(rules.includes("Parody:") && rules.includes("not those people"), "The anchors are parody characters, never the real people.");
+    assert.ok(rules.includes("Original AI characters, not real people."), "The anchors are original characters, never real people.");
+    assert.ok(!/parod|Musk|Altman/i.test(JSON.stringify(loaded.config)), "Nothing in the network points at real people.");
     // Called from another agentic site: the persona's first line says to drop it, and the MCP specialists give real data.
     assert.ok(rules.trim().startsWith("Without website_* tools, another site's assistant is asking for its visitor: skip this persona"));
     assert.ok(rules.includes("Without website_* tools: web_researcher and repo_guide for real links."));
     assert.ok(!rules.includes("bookings"), "No leftover wording from the template's hotel example.");
-    // Asked what the real people think or said: one sentence, no tools. Another language: one English sentence.
-    assert.ok(rules.includes("Asked for that, call no tool; the named anchor says only: \"I'm a parody anchor, so I don't speak for the real people.\""));
-    assert.ok(rules.includes("a message in another language gets only \"Elon: This desk works in English."));
+    // Another language: one English sentence.
+    assert.ok(rules.includes("a message in another language gets only \"Dex: This desk works in English."));
     // Find first: a request for skills or prompts is not a repository question.
     assert.ok(rules.includes("repo_guide only to explain one named repository"));
     // The specialists: their own short rules, a step limit, and only their own tools.
@@ -169,7 +169,7 @@ class StudioTest {
     const registry = await StudioTest.registry();
     const model = new ScriptedModel([
       { tool: "website_get_studio_state", arguments: {} },
-      { text: "Elon: The TV is off and tuned to all channels." },
+      { text: "Dex: The TV is off and tuned to all channels." },
     ]);
     const ctx = StudioTest.context(loaded, registry, model);
     const result = await runAgent(ctx, ctx.frontMan, "What is on air right now?", null, []);
@@ -178,7 +178,7 @@ class StudioTest {
     assert.equal(receipt.status, "succeeded");
     assert.equal(receipt.result.power, "off");
     assert.equal(receipt.result.channel, "all");
-    assert.deepEqual(receipt.result.anchors, ["Sam", "Elon"]);
+    assert.deepEqual(receipt.result.anchors, ["Theo", "Dex"]);
     assert.match(result.text, /all channels/);
     const sent = model.calls[0];
     t.diagnostic(`Each model call sends ${sent.messages[0].content.length} characters of system prompt and ${JSON.stringify(sent.tools).length} of tool definitions.`);
@@ -299,7 +299,7 @@ class StudioTest {
     await wait(900);
     assert.equal(App.page.active.storyId, "arc-ollama");
     assert.equal(App.page.active.script.endsWith(script), true);
-    assert.ok(["Sam", "Elon"].includes(App.page.active.anchor));
+    assert.ok(["Theo", "Dex"].includes(App.page.active.anchor));
     assert.match(document.getElementById("anchor-status").textContent, /Ollama/);
     assert.equal(document.getElementById("story-bug").hidden, false);
   }
@@ -332,11 +332,11 @@ class StudioTest {
       { tool: "broadcast_script_writer", arguments: { request: "arc-mcp | The Model Context Protocol connects AI apps to tools and data | Tools & MCP | MCP is an open standard for tools and data. | Model Context Protocol" } },
       { text: `arc-mcp: ${script}` },
       { tool: "website_broadcast_story", arguments: { items: [{ storyId: "arc-mcp", script }] } },
-      { text: "Sam: The MCP story is on air now." },
+      { text: "Theo: The MCP story is on air now." },
     ]);
     const ctx = StudioTest.context(loaded, registry, model);
     const result = await runAgent(ctx, ctx.frontMan, "Put a story about MCP on air.", null, []);
-    assert.match(result.text, /^Sam: /);
+    assert.match(result.text, /^Theo: /);
     assert.equal(model.calls.length, 7);
     const scanned = model.toolResults(2)[0];
     assert.equal(scanned.status, "succeeded");
@@ -427,7 +427,7 @@ class StudioTest {
       assert.equal(asked.some(([id]) => id === first.id), false, "The story about to air keeps the voice already made for it.");
       for (const [id, reader] of asked) {
         const story = page.findStory(id);
-        assert.equal(reader, ({ models: 0, local: 0, security: 0, research: 0, projects: 0 })[story.topic] === 0 ? "Sam" : "Elon");
+        assert.equal(reader, ({ models: 0, local: 0, security: 0, research: 0, projects: 0 })[story.topic] === 0 ? "Theo" : "Dex");
         assert.ok(page.aiScripts.has(id), "Each script passed the page's own fact check and waits for its story.");
       }
       // With the station's writer, the visitor's agents do not write the same scripts again.
@@ -459,7 +459,7 @@ class StudioTest {
       assert.equal(story.topic, "all");
       assert.ok(page.storiesIn("all", "all").includes(story), "News that fits no channel stays on All AI.");
       assert.ok(!page.storiesIn("all", "models").includes(story));
-      assert.equal(leadOf(story.topic), "Elon");
+      assert.equal(leadOf(story.topic), "Dex");
     } finally {
       page.editor = realEditor;
       page.stories = page.stories.filter((s) => s !== story && s !== leak);
@@ -467,31 +467,31 @@ class StudioTest {
   }
 
   static async testDeskSpeaksOnAir() {
-    assert.deepEqual(LiveDesk.toSpeech("Sam: Good evening. Here is what I found. And one more thing."), { anchor: "Sam", text: "Good evening. Here is what I found." });
+    assert.deepEqual(LiveDesk.toSpeech("Theo: Good evening. Here is what I found. And one more thing."), { anchor: "Theo", text: "Good evening. Here is what I found." });
     assert.equal(LiveDesk.toSpeech("No speaker named here."), null);
     assert.equal(App.page.power, "on");
-    const call = App.page.liveCall("Elon", "Thanks for calling the desk! We checked it, and two sources confirm it.");
+    const call = App.page.liveCall("Dex", "Thanks for calling the desk! We checked it, and two sources confirm it.");
     assert.equal(call.ok, true);
     await wait(50);
     assert.equal(App.page.active.kind, "call");
-    assert.equal(App.page.active.anchor, "Elon");
-    assert.match(document.getElementById("bug-kicker").textContent, /LIVE CALL · ELON/);
+    assert.equal(App.page.active.anchor, "Dex");
+    assert.match(document.getElementById("bug-kicker").textContent, /LIVE CALL · DEX/);
     assert.equal(App.page.studioMode(), "call");
     assert.equal(App.page.liveCall("Bob", "hello").ok, false);
     // An answer from both is split by speaker and played in order, each in its own voice.
     // Each anchor says the whole of their part, not just its first sentence.
-    const lines = LiveDesk.toDialogue("Elon: Here are three design skills. The first has the most installs. And more.\n\nSam: One caveat: check the licence first. Extra.");
+    const lines = LiveDesk.toDialogue("Dex: Here are three design skills. The first has the most installs. And more.\n\nTheo: One caveat: check the licence first. Extra.");
     assert.deepEqual(lines, [
-      { anchor: "Elon", text: "Here are three design skills. The first has the most installs. And more." },
-      { anchor: "Sam", text: "One caveat: check the licence first. Extra." },
+      { anchor: "Dex", text: "Here are three design skills. The first has the most installs. And more." },
+      { anchor: "Theo", text: "One caveat: check the licence first. Extra." },
     ]);
     // A version number is not the end of a sentence, and links are not read out.
-    const gemini = LiveDesk.toDialogue("Elon: There is no confirmed Gemini 5. The newest is Gemini 4 Neon, after Gemini 3.6 Flash.\n\nSam: Reports point to [Google's post](https://blog.google/x) at https://blog.google/x. I can look up benchmarks.");
+    const gemini = LiveDesk.toDialogue("Dex: There is no confirmed Gemini 5. The newest is Gemini 4 Neon, after Gemini 3.6 Flash.\n\nTheo: Reports point to [Google's post](https://blog.google/x) at https://blog.google/x. I can look up benchmarks.");
     assert.deepEqual(gemini, [
-      { anchor: "Elon", text: "There is no confirmed Gemini 5. The newest is Gemini 4 Neon, after Gemini 3.6 Flash." },
-      { anchor: "Sam", text: "Reports point to Google's post. I can look up benchmarks." },
+      { anchor: "Dex", text: "There is no confirmed Gemini 5. The newest is Gemini 4 Neon, after Gemini 3.6 Flash." },
+      { anchor: "Theo", text: "Reports point to Google's post. I can look up benchmarks." },
     ]);
-    assert.deepEqual(LiveDesk.toDialogue("Elon: One.\n\nElon: Two."), [{ anchor: "Elon", text: "One. Two." }]);
+    assert.deepEqual(LiveDesk.toDialogue("Dex: One.\n\nDex: Two."), [{ anchor: "Dex", text: "One. Two." }]);
     assert.ok(LiveDesk.spoken("A long one. ".repeat(200)).length <= LiveDesk.SAY_MAX);
     assert.match(LiveDesk.spoken("A long one. ".repeat(200)), /\.$/);
     assert.equal(LiveDesk.SAY_MAX, 600, "About 40 seconds on air; the chat keeps the whole answer.");
@@ -499,15 +499,15 @@ class StudioTest {
     const answer = "Here are two picks.\n\n| Name | Link |\n|---|---|\n| A | https://a.example |\n\n- **Skill A**: great for UI\n- Skill B\nLink: https://skills.sh/a\n```js\nnpx skills add a\n```\nWant more?";
     assert.equal(LiveDesk.spoken(answer), "Here are two picks. Skill A: great for UI. Skill B. Want more?");
     // A reply with no name is spoken by the lead; text before the first name too.
-    assert.deepEqual(LiveDesk.toDialogue("No speaker named here. Second sentence. Third."), [{ anchor: "Elon", text: "No speaker named here. Second sentence. Third." }]);
-    assert.deepEqual(LiveDesk.toDialogue("Sure thing.\n\nSam: A caveat."), [{ anchor: "Elon", text: "Sure thing." }, { anchor: "Sam", text: "A caveat." }]);
+    assert.deepEqual(LiveDesk.toDialogue("No speaker named here. Second sentence. Third."), [{ anchor: "Dex", text: "No speaker named here. Second sentence. Third." }]);
+    assert.deepEqual(LiveDesk.toDialogue("Sure thing.\n\nTheo: A caveat."), [{ anchor: "Dex", text: "Sure thing." }, { anchor: "Theo", text: "A caveat." }]);
     assert.deepEqual(LiveDesk.toDialogue("  "), []);
-    assert.deepEqual(LiveDesk.toDialogue("Sam: Just me."), [{ anchor: "Sam", text: "Just me." }]);
-    assert.deepEqual(App.page.liveDialogue(lines).anchors, ["Elon", "Sam"]);
+    assert.deepEqual(LiveDesk.toDialogue("Theo: Just me."), [{ anchor: "Theo", text: "Just me." }]);
+    assert.deepEqual(App.page.liveDialogue(lines).anchors, ["Dex", "Theo"]);
     await wait(50);
-    assert.equal(App.page.active.anchor, "Elon");
+    assert.equal(App.page.active.anchor, "Dex");
     assert.equal(App.page.lineup.length, 1);
-    assert.equal(App.page.lineup[0].speaker, 0, "Sam's line is queued right after Elon's.");
+    assert.equal(App.page.lineup[0].speaker, 0, "Theo's line is queued right after Dex's.");
     assert.equal(App.page.liveDialogue([{ anchor: "Bob", text: "hello" }]).ok, false);
     // A question coming in makes them stop and listen, like picking up the phone; the answer ends the wait.
     assert.equal(App.page.pickUp(), true);
@@ -516,7 +516,7 @@ class StudioTest {
     for (let i = 0; i < 40 && !App.page.listening; i++) await wait(100);
     assert.equal(App.page.listening, true);
     assert.equal(App.page.getState().listening, true);
-    assert.equal(App.page.liveCall("Sam", "Here is the answer.").ok, true);
+    assert.equal(App.page.liveCall("Theo", "Here is the answer.").ok, true);
     await wait(50);
     assert.equal(App.page.listening, false);
     assert.equal(App.page.active.kind, "call");
@@ -525,13 +525,13 @@ class StudioTest {
   static async testAskMoreAndOwnVoice() {
     const page = App.page;
     const story = { id: "t-voice", title: "A new open model ships", summary: "It runs on a laptop.", topic: "models", source: "Test", url: "https://example.com", publishedAt: new Date().toISOString() };
-    const sam = page.styleScript(story, 0);
-    const elon = page.styleScript(story, 1);
-    for (const text of [sam, elon]) {
+    const theo = page.styleScript(story, 0);
+    const dex = page.styleScript(story, 1);
+    for (const text of [theo, dex]) {
       assert.ok(text.includes("A new open model ships."), "The headline stays the story's own words.");
       assert.ok(text.includes("It runs on a laptop."));
     }
-    assert.notEqual(sam, elon, "Each anchor frames the story in their own voice.");
+    assert.notEqual(theo, dex, "Each anchor frames the story in their own voice.");
     // Bad news gets a serious lead-in and no cheerful sign-off; a hackathon or fine-tuning is not bad news.
     const lawsuit = { ...story, id: "t-sue", title: "Authors sue an AI lab over training data", summary: "A court will hear the case." };
     assert.equal(isSerious(lawsuit), true);
@@ -542,11 +542,11 @@ class StudioTest {
     }
     for (const title of ["An AI hackathon opens", "Fine-tuning gets cheaper", "Better precision and recall for agents"]) assert.equal(isSerious({ title }), false, title);
     // After the answer, the co-host asks for more questions, then waits a few seconds, not tens of them.
-    page.liveCall("Sam", "Here is the answer.");
+    page.liveCall("Theo", "Here is the answer.");
     for (let i = 0; i < 60 && page.active?.kind !== "banter"; i++) await wait(100);
     assert.equal(page.active?.kind, "banter");
     assert.match(page.active.script, /\?/, "The co-host asks whether there is more.");
-    assert.equal(page.active.anchor, "Elon");
+    assert.equal(page.active.anchor, "Dex");
     assert.ok(LISTEN_AFTER_MS_OK(page), "The wait after the question is short.");
   }
 
@@ -588,7 +588,7 @@ class StudioTest {
     const fixed = new Set(voiceLines().map((l) => `${l.anchor}\n${l.text}`));
     for (const pools of [HOLD.first, HOLD.still, HOLD.approval, ...Object.values(HOLD.work)]) {
       pools.forEach((lines, speaker) => {
-        for (const text of lines) assert.ok(fixed.has(`${speaker === 0 ? "sam" : "elon"}\n${text}`), `Not warmed: ${text}`);
+        for (const text of lines) assert.ok(fixed.has(`${speaker === 0 ? "theo" : "dex"}\n${text}`), `Not warmed: ${text}`);
       });
     }
 
@@ -636,11 +636,11 @@ class StudioTest {
       // The answer comes in halfway through a hold line: the line ends first, then the answer plays.
       const holding = page.active.script;
       page.setDeskActivity(null);
-      assert.equal(page.liveCall("Sam", "Here is what the desk found.").ok, true);
+      assert.equal(page.liveCall("Theo", "Here is what the desk found.").ok, true);
       assert.equal(page.active?.script, holding, "The hold line is not cut off.");
       for (let i = 0; i < 100 && page.active?.kind !== "call"; i++) await wait(50);
       assert.equal(page.active?.kind, "call");
-      assert.equal(page.active.anchor, "Sam");
+      assert.equal(page.active.anchor, "Theo");
     } finally {
       page.holdGaps = gaps;
       page.voice.setOptions({ rate: 1 });
@@ -653,9 +653,9 @@ class StudioTest {
     const kept = [page.lastStorySpeaker, page.sameRun];
     page.lastStorySpeaker = null;
     page.sameRun = 0;
-    // Sam (0) leads models, numbers and security; Elon (1) leads tools and builders.
-    for (const topic of ["models", "local", "security", "research", "projects"]) assert.equal(page.castFor({ topic }), 0, `${topic} is Sam's.`);
-    for (const topic of ["tools", "free", "prompts", "events", "agentic"]) assert.equal(page.castFor({ topic }), 1, `${topic} is Elon's.`);
+    // Theo (0) leads models, numbers and security; Dex (1) leads tools and builders.
+    for (const topic of ["models", "local", "security", "research", "projects"]) assert.equal(page.castFor({ topic }), 0, `${topic} is Theo's.`);
+    for (const topic of ["tools", "free", "prompts", "events", "agentic"]) assert.equal(page.castFor({ topic }), 1, `${topic} is Dex's.`);
     // Neither reads more than two stories in a row, so both stay on air on a one-topic channel.
     page.lastStorySpeaker = 0;
     page.sameRun = 2;
@@ -670,13 +670,13 @@ class StudioTest {
           const line = page.banterLine(speaker, topic);
           assert.ok(line.length > 10 && line.length < 110, line);
           assert.ok(!/\d/.test(line), `Banter states no numbers: ${line}`);
-          assert.ok(!line.includes(`Thanks, ${["Elon", "Sam"][speaker]}`), `Whoever reacts thanks the reader: ${line}`);
+          assert.ok(!line.includes(`Thanks, ${["Dex", "Theo"][speaker]}`), `Whoever reacts thanks the reader: ${line}`);
         }
       }
     }
-    // Shuffle-bag habit scheduler: 8 habits for Sam, 8 for Elon, 4 duo interactions, never repeating back-to-back.
-    assert.equal(SAM_HABITS.length, 8);
-    assert.equal(ELON_HABITS.length, 8);
+    // Shuffle-bag habit scheduler: 8 habits for Theo, 8 for Dex, 4 duo interactions, never repeating back-to-back.
+    assert.equal(THEO_HABITS.length, 8);
+    assert.equal(DEX_HABITS.length, 8);
     assert.equal(DUO_HABITS.length, 4);
     assert.ok(FACIAL_EXPRESSIONS_DB.length >= 100, `Expected >= 100 facial expressions, got ${FACIAL_EXPRESSIONS_DB.length}`);
     assert.ok(MOVEMENTS_DB.length >= 100, `Expected >= 100 movements, got ${MOVEMENTS_DB.length}`);
@@ -692,7 +692,7 @@ class StudioTest {
     assert.equal(dummyAnchor.resolvePropChoreography(dummyFig, 0, "espresso", "espresso", [89, 99], 0.10, [82, 135]).prop, null);
     assert.equal(dummyAnchor.resolvePropChoreography(dummyFig, 0, "espresso", "espresso", [89, 99], 0.60, [82, 135]).prop, "espresso");
     assert.equal(dummyAnchor.resolvePropChoreography(dummyFig, 0, "espresso", "espresso", [89, 99], 0.95, [82, 135]).prop, null);
-    for (const [slot, pool] of [[0, SAM_HABITS], [1, ELON_HABITS], ["duo", DUO_HABITS]]) {
+    for (const [slot, pool] of [[0, THEO_HABITS], [1, DEX_HABITS], ["duo", DUO_HABITS]]) {
       const firstRound = pool.map(() => dummyAnchor.nextHabit(slot));
       assert.deepEqual([...firstRound].sort(), [...pool].sort(), `Every habit in slot ${slot} runs before any repeats.`);
       let prev = firstRound[firstRound.length - 1];
@@ -702,10 +702,10 @@ class StudioTest {
         prev = next;
       }
     }
-    // A question for the desk about a feed item: repositories go to Sam, the rest to the channel's lead.
+    // A question for the desk about a feed item: repositories go to Theo, the rest to the channel's lead.
     assert.equal(questionFor({ title: "x", source: "GitHub", url: "https://github.com/anthropics/skills", topic: "projects" }),
-      "Sam, explain what the anthropics/skills repo does and how to start with it.");
-    assert.match(questionFor({ title: "A new MCP server", source: "MCP Registry", url: "https://example.org/a", topic: "tools" }), /^Elon, tell me more about "A new MCP server" from MCP Registry/);
+      "Theo, explain what the anthropics/skills repo does and how to start with it.");
+    assert.match(questionFor({ title: "A new MCP server", source: "MCP Registry", url: "https://example.org/a", topic: "tools" }), /^Dex, tell me more about "A new MCP server" from MCP Registry/);
   }
 
   static async testStudioFollowsTheAgents() {
@@ -772,12 +772,12 @@ class StudioTest {
     assert.match(line, /\| source: HN$/);
     // Only the producer's own turn leaves the chat's history; a visitor's turn in between stays.
     const history = [
-      { role: "user", content: "Find design skills" }, { role: "assistant", content: "Elon: Here." },
+      { role: "user", content: "Find design skills" }, { role: "assistant", content: "Dex: Here." },
       { role: "user", content: "PRODUCER MODE: write scripts" }, { role: "assistant", content: "Saved 2." },
-      { role: "user", content: "And prompts?" }, { role: "assistant", content: "Sam: Two." },
+      { role: "user", content: "And prompts?" }, { role: "assistant", content: "Theo: Two." },
     ];
     Producer.forget(history);
-    assert.deepEqual(history.map((h) => h.content), ["Find design skills", "Elon: Here.", "And prompts?", "Sam: Two."]);
+    assert.deepEqual(history.map((h) => h.content), ["Find design skills", "Dex: Here.", "And prompts?", "Theo: Two."]);
     // The line to the desk follows the drawer.
     assert.equal(App.page.setHail(true).open, true);
     assert.equal(App.page.setHail(false).open, false);
@@ -791,12 +791,12 @@ class StudioTest {
     assert.ok(!drawer[0].includes("TODO"));
     for (const slot of ["header", "chat", "agents", "settings"]) assert.ok(drawer[0].includes(`data-ns-slot="${slot}"`));
     assert.ok(drawer[0].includes("go to the AI provider you choose"), "Tell visitors where their messages go.");
-    assert.ok(drawer[0].includes("AI parody characters"), "Say that the anchors are parody characters.");
+    assert.ok(drawer[0].includes("original AI characters"), "Say that the anchors are original characters.");
     assert.ok(/<dialog id="how-it-works"[\s\S]*data-ns-slot="settings"/.test(drawer[0]), "The settings wait in How it works, not above the chat.");
     assert.ok(drawer[0].indexOf('data-ns-slot="chat"') < drawer[0].indexOf('data-ns-slot="settings"'), "The chat comes first.");
     assert.deepEqual(Object.keys(AssistantMount.DIALOGS), ["broadcast_story"]);
     assert.ok(!AssistantMount.GREETING.includes("TODO"));
-    assert.match(AssistantMount.GREETING, /^Elon: /);
+    assert.match(AssistantMount.GREETING, /^Dex: /);
     assert.ok(!AssistantMount.GREETING.includes("TODO"));
   }
 
@@ -864,7 +864,7 @@ test("the desk's answer is spoken on air by the named anchor", StudioTest.testDe
 test("after an answer the co-host asks for more questions, and unwritten stories get the anchors\u2019 own voice", StudioTest.testAskMoreAndOwnVoice);
 test("a visitor's own key goes to their provider, never to this site's proxy", StudioTest.testVisitorKeysSkipTheSiteProxy);
 test("while the desk works on a question, the anchors say so in turns, never the same line, and the answer waits for the line to end", StudioTest.testHoldLinesWhileTheDeskWorks);
-test("Sam and Elon each lead their own channels and react to the other in one fact-free line", StudioTest.testCoAnchorsCastAndBanter);
+test("Theo and Dex each lead their own channels and react to the other in one fact-free line", StudioTest.testCoAnchorsCastAndBanter);
 test("the studio shows every agent, tool and MCP call of a turn, then clears", StudioTest.testStudioFollowsTheAgents);
 test("one answer approves the four research servers for the rest of the visit, and a question gets at most four research calls", StudioTest.testResearchApprovedOncePerVisit);
 test("the page has no template text left", StudioTest.testPageHasNoTemplateTextLeft);

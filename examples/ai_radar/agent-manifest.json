@@ -5,7 +5,7 @@
       "name": "ai_radar",
       "front_man": "radar_desk",
       "hocon": "./ai_radar.network.json",
-      "description": "Call the AI Radar desk: Elon Cache and Sam Alt-Tab, the crew of its radar room, find real AI resources for you (prompts, agent skills, MCP servers, open and free models, GitHub projects, papers, competitions), explain them, check what you heard, and put AI news on air.",
+      "description": "Call the AI Radar desk: Dex Ping and Theo Sweep, the crew of its radar room, find real AI resources for you (prompts, agent skills, MCP servers, open and free models, GitHub projects, papers, competitions), explain them, check what you heard, and put AI news on air.",
       "tags": [
         "agentified-website",
         "ai-news",
@@ -14,12 +14,12 @@
         "discovery"
       ],
       "sample_queries": [
-        "Elon, find me design skills for Claude.",
-        "Sam, is there a good prompt for code review?",
+        "Dex, find me design skills for Claude.",
+        "Theo, is there a good prompt for code review?",
         "Which free models can I use for an agent today?",
         "I heard there's a new MCP server for GitHub. Can you check it and put it on air?",
-        "Sam, explain what the anthropics/skills repo does.",
-        "Elon, are there any AI hackathons open right now?"
+        "Theo, explain what the anthropics/skills repo does.",
+        "Dex, are there any AI hackathons open right now?"
       ]
     }
   ],

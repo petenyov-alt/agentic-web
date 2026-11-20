@@ -2,8 +2,8 @@
 //   <script type="module" src="site.js"></script>
 // The page needs the mount markup from assistant-section.html.
 // The chat sits in a dock under the studio screen ("Ping the desk" takes the visitor to it);
-// while the visitor is in it, Elon checks the incoming line in the studio. A question sent to the desk shows on the studio's scope as an amber
-// contact until it is answered. While the agents work, the studio shows it: Sam and Elon
+// while the visitor is in it, Dex checks the incoming line in the studio. A question sent to the desk shows on the studio's scope as an amber
+// contact until it is answered. While the agents work, the studio shows it: Theo and Dex
 // work at their consoles and the control deck lights the active agents and MCP servers.
 // The desk's answers are spoken on air by whoever gives them, a broadcast asks the
 // visitor first on an approval card, and the AI producer writes the next stories' scripts.
@@ -21,7 +21,7 @@ export class AssistantMount {
   /**
    * The first chat message once the visitor has a key: what the assistant can do here.
    */
-  static GREETING = "Elon: You're through to the AI Radar desk. Ask Sam or me to find a prompt, a skill, an MCP server or a model, to explain a repo, or tell us something you heard and we'll check it.";
+  static GREETING = "Dex: You're through to the AI Radar desk. Ask Theo or me to find a prompt, a skill, an MCP server or a model, to explain a repo, or tell us something you heard and we'll check it.";
 
   /**
    * The confirmation dialog's words for each irreversible action. Name each button after
@@ -31,7 +31,7 @@ export class AssistantMount {
   static DIALOGS = {
     broadcast_story: {
       title: "Put this on air?",
-      sentence: "Elon and Sam will read these scripts on air now. You can stop the briefing at any time.",
+      sentence: "Dex and Theo will read these scripts on air now. You can stop the briefing at any time.",
       confirm: "Put it on air",
       decline: "Not now",
     },
@@ -57,8 +57,8 @@ export class AssistantMount {
       });
       const input = document.querySelector("#ns-input");
       if (input) {
-        input.placeholder = "Ask Sam or Elon…";
-        input.setAttribute("aria-label", "Your question for Sam and Elon");
+        input.placeholder = "Ask Theo or Dex…";
+        input.setAttribute("aria-label", "Your question for Theo and Dex");
         input.maxLength = 4000;   // the site's AI takes a message of up to 6,000 characters
       }
       // While the visitor types a follow-up, the anchors keep waiting instead of going back to the news.
@@ -109,7 +109,7 @@ export class AssistantMount {
   static describeSiteAi() {
     const note = document.querySelector(".assistant-note");
     if (note) {
-      note.textContent = "Your messages and the stories the assistant reads go to this site's server, which passes them to Otari, an AI service (or to Groq when Otari is busy), using the site's key. They are AI parody characters, not the real people. To use your own account instead, add your key in the settings below.";
+      note.textContent = "Your messages and the stories the assistant reads go to this site's server, which passes them to Otari, an AI service (or to Groq when Otari is busy), using the site's key. Dex and Theo are original AI characters, not real people. To use your own account instead, add your key in the settings below.";
     }
     const label = document.querySelector(".producer span");
     if (label) {
@@ -440,7 +440,7 @@ export class HowItWorks {
 /**
  * The line to the desk: the chat dock under the studio screen. "Ping the desk" (its id,
  * btn-red-phone, is from an earlier design) sounds a sonar ping and takes the visitor to the
- * input. While the visitor is in the dock, Elon checks the incoming line in the studio. It
+ * input. While the visitor is in the dock, Dex checks the incoming line in the studio. It
  * works even if the assistant fails to boot.
  */
 export class DeskLine {
@@ -463,7 +463,7 @@ export class DeskLine {
     document.addEventListener("radar:ask", (e) => DeskLine.ask(e.detail?.text, e.detail?.send !== false));
   }
 
-  /** The visitor is at the line (or has left it). In the studio, Elon checks the line meanwhile. */
+  /** The visitor is at the line (or has left it). In the studio, Dex checks the line meanwhile. */
   static set(open) {
     if (DeskLine.open === open) return;
     DeskLine.open = open;
@@ -540,9 +540,9 @@ export class DeskLine {
 
 /**
  * The desk in the studio. While a turn runs, every agent and tool that starts or ends in
- * the runtime's trace is shown at once: Sam and Elon work at their consoles and the control
+ * the runtime's trace is shown at once: Theo and Dex work at their consoles and the control
  * deck lights the agents and MCP servers in use. When a visitor's turn ends, those
- * who answered ("Elon: …", "Sam: …") say the start of the answer live on air. The answer
+ * who answered ("Dex: …", "Theo: …") say the start of the answer live on air. The answer
  * is already on the visitor's screen in the chat before it is spoken.
  */
 export class LiveDesk {
@@ -552,7 +552,7 @@ export class LiveDesk {
     web_researcher: "mcp", repo_guide: "repo", contest_desk: "mcp", broadcast_script_writer: "writing",
   };
 
-  static LEAD = "Elon";          // speaks any answer that arrives without a name
+  static LEAD = "Dex";          // speaks any answer that arrives without a name
   static running = new Map();   // span id -> {kind, agent, tool, host, producer}, in start order
   static researchCalls = 0;     // research-server calls in the visitor's current question
 
@@ -690,7 +690,7 @@ export class LiveDesk {
 
   /**
    * Split an answer into each anchor's lines, in order:
-   * "Elon: Hi. More.\n\nSam: One caveat." → [{anchor: "Elon", text}, {anchor: "Sam", text}].
+   * "Dex: Hi. More.\n\nTheo: One caveat." → [{anchor: "Dex", text}, {anchor: "Theo", text}].
    * Each anchor says the whole of their part (see spoken), up to six turns; two turns in a
    * row by the same anchor become one. Text before the first name (or an answer with no
    * name at all, which the model sometimes sends) is spoken by the lead anchor, so a reply
@@ -699,10 +699,10 @@ export class LiveDesk {
   static toDialogue(reply) {
     let text = String(reply || "").trim();
     if (!text) return [];
-    let marks = [...text.matchAll(/(^|\n|[.!?…"”)])\s*(Sam|Elon)\s*:\s*/gi)];
+    let marks = [...text.matchAll(/(^|\n|[.!?…"”)])\s*(Theo|Dex)\s*:\s*/gi)];
     if (!marks.length || text.slice(0, marks[0].index + marks[0][1].length).trim()) {
       text = `${LiveDesk.LEAD}: ${text}`;
-      marks = [...text.matchAll(/(^|\n|[.!?…"”)])\s*(Sam|Elon)\s*:\s*/gi)];
+      marks = [...text.matchAll(/(^|\n|[.!?…"”)])\s*(Theo|Dex)\s*:\s*/gi)];
     }
     const lines = [];
     marks.forEach((mark, i) => {
@@ -717,9 +717,9 @@ export class LiveDesk {
     return lines.slice(0, 6);
   }
 
-  /** "Elon: Hello there. More text…" → {anchor: "Elon", text: the first two sentences}. */
+  /** "Dex: Hello there. More text…" → {anchor: "Dex", text: the first two sentences}. */
   static toSpeech(reply) {
-    const match = /^\s*(Sam|Elon)\s*:\s*([\s\S]+)$/i.exec(reply || "");
+    const match = /^\s*(Theo|Dex)\s*:\s*([\s\S]+)$/i.exec(reply || "");
     if (!match) return null;
     const sentences = match[2].replace(/\s+/g, " ").match(LiveDesk.SENTENCE) || [match[2]];
     const text = sentences.slice(0, 2).map((s) => s.trim()).join(" ").slice(0, 300);
@@ -747,7 +747,7 @@ export class Producer {
   static MAX_RESEARCH = 4;   // research-server calls per visitor question
   static rounds = 0;
   static busy = false;
-  // On by default once the visitor has a key, so Elon and Sam read AI-written scripts;
+  // On by default once the visitor has a key, so Dex and Theo read AI-written scripts;
   // a visitor who switches it off keeps it off.
   static auto = true;
 
@@ -833,7 +833,7 @@ export class Producer {
         Producer.serverNoted = true;
         const label = document.querySelector("#producer-option");
         if (label) label.hidden = true;
-        Producer.say("Scripts: the station's AI writer drafts what Elon and Sam say, once for every viewer, and every script is fact-checked before it airs.");
+        Producer.say("Scripts: the station's AI writer drafts what Dex and Theo say, once for every viewer, and every script is fact-checked before it airs.");
       }
       return;
     }
@@ -842,8 +842,8 @@ export class Producer {
     if (Producer.auto && hasKey && !Producer.toggle.checked) {
       Producer.toggle.checked = true;
       Producer.say(AssistantMount.siteFunded
-        ? "On: the agents write the scripts Elon and Sam read, a few stories at a time. Switch off to save the site's free allowance."
-        : "On: the agents write the scripts Elon and Sam read. Switch off to save your key's credits.");
+        ? "On: the agents write the scripts Dex and Theo read, a few stories at a time. Switch off to save the site's free allowance."
+        : "On: the agents write the scripts Dex and Theo read. Switch off to save your key's credits.");
     }
     if (!Producer.toggle?.checked || Producer.busy || App.page.power !== "on") return;
     // Never while a visitor's question is being answered: the two turns would share the chat's history.

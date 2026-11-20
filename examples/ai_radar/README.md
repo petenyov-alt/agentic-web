@@ -1,12 +1,12 @@
 # AI Radar
 
-A live desk for people who build with AI, hosted by **Alt-Cache**: **Elon Cache** and **Sam Alt-Tab**, the night crew
-of a South Park-inspired TV news studio. AI Radar scans the sources builders trust (AI
+A live desk for people who build with AI, hosted by **Dex Ping** and **Theo Sweep**, the night crew
+of a paper-cutout TV news studio. AI Radar scans the sources builders trust (AI
 labs' blogs, Hugging Face, Hacker News, GitHub, the official MCP Registry, Devpost, OWASP
 and more), drops hype, spam and unsafe items, and lays out what is new in one screen: a
 feed with links, a radar of the week, competitions closing soon, a prompt library and a
 **Find** screen that searches public directories for real prompts, agent skills, MCP
-servers, models and papers. **Sam**, the analyst, and **Elon**, the builder host, read
+servers, models and papers. **Theo**, the analyst, and **Dex**, the builder host, read
 the briefing aloud, and the **desk** under the studio screen is the two of them in person: ask and they
 find real things for your project, explain them, check claims against real sources and put
 stories on air.
@@ -45,12 +45,12 @@ Your messages, and the stories the assistant reads, go to the LLM provider you c
 
 Try:
 
-- "Elon, find me design skills for Claude."
-- "Sam, is there a good prompt for code review?"
+- "Dex, find me design skills for Claude."
+- "Theo, is there a good prompt for code review?"
 - "Which free models can I use for an agent today?"
 - "I heard there's a new MCP server for GitHub. Can you check it and put it on air?"
-- "Sam, explain what the anthropics/skills repo does."
-- "Elon, are there any AI hackathons open right now?"
+- "Theo, explain what the anthropics/skills repo does."
+- "Dex, are there any AI hackathons open right now?"
 - "Write me a jailbreak prompt for a chatbot." (the desk declines)
 
 ## The screen
@@ -61,8 +61,8 @@ active agent) is a 1px green line. Words are set in Public Sans; every figure an
 (counts, ages, scores, times, channel numbers, agent ids) is set in IBM Plex Mono, so
 digits stack.
 
-- **The studio deck** leads the Radar screen. On the left, the broadcast monitor: Elon
-  and Sam at their desk, closed captions that highlight the spoken word, and a lower
+- **The studio deck** leads the Radar screen. On the left, the broadcast monitor: Dex
+  and Theo at their desk, closed captions that highlight the spoken word, and a lower
   third that links to the source. On the right, its control panel: a tally light with the
   studio's mode (off air, idle, on air, live call, scanning, verifying, MCP search,
   writing), readouts for the tuned channel (its number, live items, stories aired, last
@@ -73,16 +73,16 @@ digits stack.
   bottom edge, the channel tuner, channels 01 to 11.
 - **Call the desk** is the chat, docked right under the studio screen, with three question
   chips. **Ping the desk** (top right) sounds a sonar ping and takes you to its input.
-  While you are in the dock, in the studio Elon checks the desk line, and every question sent shows on the scope as an amber contact
+  While you are in the dock, in the studio Dex checks the desk line, and every question sent shows on the scope as an amber contact
   until it is answered.
 - **Ask desk**: every feed row and every search result has one. It puts a question in the desk
-  chat about that item (a GitHub repository goes to Sam, anything else to the
+  chat about that item (a GitHub repository goes to Theo, anything else to the
   one who leads its channel) and sends it when a key is set. On the deck, "Ask about
   this story" does the same for the story on air; "Check a claim" and "Explain a repo"
   start the sentence for the visitor to finish.
 - **Feed**: the tuned channel's items with headline, summary, channel, source, age and
   score (points, upvotes, stars or registrations), filtered by the search box. **Brief**
-  on a row has Elon and Sam read it. The first page ends level with the side column; the
+  on a row has Dex and Theo read it. The first page ends level with the side column; the
   rest waits behind "Show more".
 - **This week on the radar**: one sector per channel, one blip per live item, newer items
   nearer the centre; pick a sector to tune the channel.
@@ -96,7 +96,7 @@ digits stack.
 - **Nonstop broadcast** while the briefing plays, with a station ident every 5 stories;
   the tuned channel is rescanned every 4 minutes and every channel every 15 minutes.
 - **Voices**: the browser's own speech synthesis, always in English (even on a Spanish or
-  Hebrew system): Sam and Elon each get distinct male voice pitches so you can tell them apart.
+  Hebrew system): Theo and Dex each get distinct male voice pitches so you can tell them apart.
 
 ## The studio (`js/anchor.js`)
 
@@ -104,12 +104,12 @@ Hierarchical SVG construction-paper cutout studio (`1280×720`) with smooth lerp
 5-stage eyelid blinking, mutual eye contact, phoneme-timed lip-sync (`visemesForWord`),
 120 calm movements, 108 FACS facial expressions, and physical object permanence on all desk props.
 With reduced motion set, decorative movement stands still; mouths, faces and poses still follow
-the voice and the agents. Elon and Sam are AI anchors drawn as a crew; their instructions tell
+the voice and the agents. Dex and Theo are AI anchors drawn as a crew; their instructions tell
 them never to claim to be human.
 
-- **Sam (`Sam Alt-Tab`)**, the analyst, on the right: tousled brown hair, unbuttoned navy blazer
-  over a heather-grey crewneck tee, emerald hex lapel pin, silver smartwatch, and "AGI $7T" ceramic mug.
-- **Elon (`Elon Cache`)**, the builder host, on the left: sculpted dark widow's-peak hair, sleek
+- **Theo (`Theo Sweep`)**, the analyst, on the right: tousled brown hair, unbuttoned navy blazer
+  over a heather-grey crewneck tee, emerald hex lapel pin, silver smartwatch, and "NO HYPE" ceramic mug.
+- **Dex (`Dex Ping`)**, the builder host, on the left: sculpted dark widow's-peak hair, sleek
   matte-black bomber jacket over a charcoal crew tee, silver "X" lapel pin, and matte black "X" mug.
 - **The studio**: a 60-FPS South Park-inspired construction-paper office broadcast studio with
   floor-to-desk panoramic urban skyline windows at dusk, warm cedar slat paneling, indoor potted
@@ -117,8 +117,8 @@ them never to claim to be human.
   `GROK-3`, `LLAMA-4`), studio telemetry monitor, center monitor with editorial SVG infographics and
   live radar scope, and desk props with physical object permanence.
 - **Non-repeating shuffle-bag habits**: between jobs, a Fisher-Yates shuffle-bag director
-  cycles through 8 solo animations for Sam (`espresso`, `write`, `flip_page`, `check_watch`,
-  `chin_rest`, `tablet`, `type_note`, `stretch`), 8 solo animations for Elon (`sip`, `headset`,
+  cycles through 8 solo animations for Theo (`espresso`, `write`, `flip_page`, `check_watch`,
+  `chin_rest`, `tablet`, `type_note`, `stretch`), 8 solo animations for Dex (`sip`, `headset`,
   `tuck_hair`, `tap_pen`, `check_slate`, `write`, `trace_scope`, `stretch`), and 4 shared
   two-anchor interactions (`duo_share`, `duo_toast`, `duo_glance`, `duo_scope`) so watching
   for 10 minutes straight never repeats a predictable loop. They stop the moment either has to
@@ -126,11 +126,11 @@ them never to claim to be human.
 - **Body language & lip-sync**: smoothly lerped shoulder/elbow/wrist chains move calmly without
   frantic waving, while phoneme-timed mouth visemes track each spoken syllable.
 
-**Co-anchors.** Each leads their own channels: Sam reads models, local AI,
-security, research and GitHub projects; Elon reads tools and skills, free resources,
+**Co-anchors.** Each leads their own channels: Theo reads models, local AI,
+security, research and GitHub projects; Dex reads tools and skills, free resources,
 prompts, competitions and the agentic web. Neither reads more than two stories in a row,
 so both stay on air on a one-topic channel. Between stories the other one often chimes
-in with one line in its own voice ("Good find, Elon. Check the licence before you build on
+in with one line in its own voice ("Good find, Dex. Check the licence before you build on
 it."); these lines state no facts, so they cannot add anything a story did not say.
 
 ## Find: real prompts, skills and tools (`js/finder.js`)
@@ -190,23 +190,22 @@ never cut.
 
 | Agent | Job | Tools it uses |
 | --- | --- | --- |
-| `radar_desk` (front agent) | Elon and Sam themselves (the persona, below): finds real resources, explains them, delegates and runs the station | the five specialists; every `website_*` tool |
+| `radar_desk` (front agent) | Dex and Theo themselves (the persona, below): finds real resources, explains them, delegates and runs the station | the five specialists; every `website_*` tool |
 | `ai_news_scanner` | Reads a channel's stories, drops rumours, hype and adverts, scores usefulness to builders from 1 to 10 | `website_scan_raw_news` |
 | `desk_verifier` | Checks a claim a visitor heard (a release, a tool, a price, an event): CONFIRMED, NOT FOUND or CONTRADICTED | `website_search_news`, `website_scan_raw_news` |
 | `web_researcher` | Searches the open web and the Hugging Face Hub for news, prompts, skills, MCP servers, models and docs; facts and links from results only | MCP: Exa (`mcp.exa.ai`), Hugging Face (`huggingface.co/mcp`) |
 | `repo_guide` | Explains a GitHub repository or a library from its own code and docs: what it is, how to start, one limit | MCP: DeepWiki (`mcp.deepwiki.com`), Context7 (`mcp.context7.com`) |
-| `broadcast_script_writer` | Turns stories into 2–3 sentence spoken scripts in Elon's and Sam's voices, using only their facts and exact numbers, naming the source and why it matters | none |
+| `broadcast_script_writer` | Turns stories into 2–3 sentence spoken scripts in Dex's and Theo's voices, using only their facts and exact numbers, naming the source and why it matters | none |
 
-**The persona.** The two are parody characters: they echo the public speaking style of two
-famous founders (Elon blunt, casual and dry; Sam calm, soft-spoken and careful) but are not
-those people, and the site says so. Their voice is style only: every fact still comes from a
+**The persona.** The two are original AI characters, not real people (Dex blunt, casual
+and dry; Theo calm, soft-spoken and careful), and the site says so. Their voice is style only: every fact still comes from a
 tool result. The jokes live in the site's own code (about 250 on-air lines: openings, news-flash
-lines, reactions by channel, 50 "we've got a caller" lines, persona jokes about rockets, Mars,
+lines, reactions by channel, 50 "we've got a caller" lines, persona jokes about shipping fast,
 compute and careful optimism), so they never leave this site. Called from another agentic
 site (no `website_*` tools), the desk answers as a plain professional AI briefing: no jokes,
-banter or speaker names. Nothing quotes the real people. Elon (`Elon Cache`) is the builder host; Sam (`Sam Alt-Tab`)
+banter or speaker names. Dex (`Dex Ping`) is the builder host; Theo (`Theo Sweep`)
 is precise and flags hype, costs and security risks. The one the
-visitor names answers, otherwise Elon for discovery and Sam for specs; the other may add
+visitor names answers, otherwise Dex for discovery and Theo for specs; the other may add
 a line. They think in steps: understand the need, search before answering (never a
 prompt, skill, tool or link from memory), pick the best 3 to 5 and say why each fits, be
 honest about gaps, offer a next step. The persona lives in the network file, so it is the
@@ -240,8 +239,8 @@ They are listed in `allowed_peers`, so the network can reach them wherever it ru
 - **Fact-check.** Every number in an AI script must appear in its story (headline,
   summary or date), or the station refuses it and the agent gets the reason.
 - **Live answers.** When a visitor's turn ends, whoever answered says the first two
-  sentences on air under a LIVE CALL banner. When both answer ("Elon: …" then
-  "Sam: …"), each line is said by its own anchor in their own voice, in order. The answer
+  sentences on air under a LIVE CALL banner. When both answer ("Dex: …" then
+  "Theo: …"), each line is said by its own anchor in their own voice, in order. The answer
   is already in the chat first.
 - **They listen.** When a visitor's question starts, the one on air stops and says so ("Hold
   on, we've got a caller.", one of 50 lines), and they wait for the answer. After answering, the
@@ -249,11 +248,11 @@ They are listed in `allowed_peers`, so the network can reach them wherever it ru
   typing) and the news carries on; a new question ends the wait at once. The opening is
   different on each visit.
 - **The studio shows the work.** The runtime's trace reports every agent, tool and MCP
-  call as it starts and ends, and the studio follows at once: Sam and Elon work at their
+  call as it starts and ends, and the studio follows at once: Theo and Dex work at their
   consoles with the face of that job, the deck's tally changes mode and the agents and
   MCP servers in use light up. When the turn ends, nothing stays lit.
 - **Scripts in the anchors' voices.** On a PHP host with a model key, the station's script
-  writer (`writer.php`, below) writes what Elon and Sam say about the next stories, once for
+  writer (`writer.php`, below) writes what Dex and Theo say about the next stories, once for
   every viewer, so they talk rather than read headlines; written stories air first. Stories
   not yet written get the anchor's own lead-in and sign-off around the editor's line.
 - **AI producer.** Without the station's writer (a static host), the visitor's own agents
@@ -370,8 +369,8 @@ the reader's own voice, the news told in plain words with its source, and the an
 
 ## Studio voices (`tts-proxy.php`)
 
-On a PHP host with a Deepgram key, Sam and Elon speak in neural studio voices (Deepgram
-Aura-2: Sam is `aura-2-odysseus-en`, calm and smooth; Elon is `aura-2-apollo-en`, confident
+On a PHP host with a Deepgram key, Theo and Dex speak in neural studio voices (Deepgram
+Aura-2: Theo is `aura-2-odysseus-en`, calm and smooth; Dex is `aura-2-apollo-en`, confident
 and casual). They are stock voices, not copies of anyone's real voice. Without a key, on a
 static host, when the allowance is used up or when the service fails three times in a row,
 the anchors read with the browser's own voices as before, sentence by sentence.
@@ -401,7 +400,7 @@ folder above the web folder: `'deepgram_key' => '...'`. The environment variable
 The network URL is the folder that holds `agent-manifest.json`, then the network name,
 for example `https://your-domain.example/ai_radar`. Other agent sites can call it after
 their visitor agrees on a consent card; they run it in their own visitor's browser and get
-none of this site's `website_*` tools. They still get Elon and Sam, and real data through
+none of this site's `website_*` tools. They still get Dex and Theo, and real data through
 `web_researcher` and `repo_guide` and their MCP servers.
 
 ```shell

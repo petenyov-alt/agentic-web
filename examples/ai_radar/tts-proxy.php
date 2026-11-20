@@ -1,7 +1,7 @@
 <?php
 // The anchors' studio voices: Deepgram Aura-2 text to speech, for the pages of this site.
 //
-// The page posts one sentence at a time, {"text": "...", "anchor": "sam" | "elon"}, and gets
+// The page posts one sentence at a time, {"text": "...", "anchor": "theo" | "dex"}, and gets
 // MP3 audio back. This file adds the site's Deepgram key, which lives outside the web folder,
 // and keeps every sentence it has made in a cache: a news script is turned into audio once,
 // and every later visitor hears the cached file without a new request to Deepgram.
@@ -25,7 +25,7 @@ ini_set('display_errors', '0');
 const TTS_DEFAULTS = [
   'deepgram_key' => '',
   'tts_upstream' => 'https://api.deepgram.com/v1/speak',
-  'tts_voices' => ['sam' => 'aura-2-odysseus-en', 'elon' => 'aura-2-apollo-en'],
+  'tts_voices' => ['theo' => 'aura-2-odysseus-en', 'dex' => 'aura-2-apollo-en'],
   'tts_max_text' => 1000,          // characters per request (Deepgram takes up to 2000)
   'tts_per_ip_hour' => 30000,      // characters per visitor per hour, not counting the cache (warmVoices needs about 22,500)
   'tts_per_ip_day' => 60000,
@@ -195,9 +195,9 @@ if (!$ready) tts_error(503, 'The studio voices are switched off.', 'voices_off')
 $raw = (string) file_get_contents('php://input', false, null, 0, 8001);
 if (strlen($raw) > 8000) tts_error(413, 'The request is too large.', 'too_large');
 $req = json_decode($raw, true);
-if (!is_array($req)) tts_error(400, 'Send {"text": "...", "anchor": "sam" or "elon"}.', 'invalid_request');
+if (!is_array($req)) tts_error(400, 'Send {"text": "...", "anchor": "theo" or "dex"}.', 'invalid_request');
 $anchor = strtolower((string) ($req['anchor'] ?? ''));
-if (!isset($cfg['tts_voices'][$anchor])) tts_error(400, 'Name one of the anchors: sam or elon.', 'unknown_anchor');
+if (!isset($cfg['tts_voices'][$anchor])) tts_error(400, 'Name one of the anchors: theo or dex.', 'unknown_anchor');
 // Plain text only: no control characters, single spaces.
 $text = trim(preg_replace('/\s+/u', ' ', preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', (string) ($req['text'] ?? ''))));
 $chars = function_exists('mb_strlen') ? mb_strlen($text, 'UTF-8') : strlen($text);

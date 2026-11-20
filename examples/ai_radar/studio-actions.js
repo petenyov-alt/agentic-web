@@ -64,7 +64,7 @@ class StudioActions {
   static getStudioStateAction() {
     return {
       name: "get_studio_state",
-      description: "Read what the station shows now: whether the briefing plays, the tuned channel, each channel's story count, which anchor (Elon or Sam) is reading which story, what is queued, the last 5 stories aired, volume. No story texts: use website_scan_raw_news for those.",
+      description: "Read what the station shows now: whether the briefing plays, the tuned channel, each channel's story count, which anchor (Dex or Theo) is reading which story, what is queued, the last 5 stories aired, volume. No story texts: use website_scan_raw_news for those.",
       effect: "read",
       inputSchema: { type: "object", properties: {}, additionalProperties: false },
       execute: () => App.page.getStudioState(),
@@ -112,7 +112,7 @@ class StudioActions {
   static broadcastStoryAction() {
     return {
       name: "broadcast_story",
-      description: "Put stories on air now, replacing the current story. The visitor sees an approval card with each story and script first. Every number in a script must appear in its story, or the call is refused. Elon and Sam take turns reading aloud with captions; the briefing starts if it is off; afterwards the nonstop broadcast carries on. Returns the lineup, or ok false with a reason.",
+      description: "Put stories on air now, replacing the current story. The visitor sees an approval card with each story and script first. Every number in a script must appear in its story, or the call is refused. Dex and Theo take turns reading aloud with captions; the briefing starts if it is off; afterwards the nonstop broadcast carries on. Returns the lineup, or ok false with a reason.",
       effect: "irreversible",
       inputSchema: {
         type: "object",
@@ -160,7 +160,7 @@ class StudioActions {
   static stopBroadcastAction() {
     return {
       name: "stop_broadcast",
-      description: "Pause the briefing: Elon and Sam stop reading. website_broadcast_story or website_set_channel starts it again.",
+      description: "Pause the briefing: Dex and Theo stop reading. website_broadcast_story or website_set_channel starts it again.",
       effect: "write",
       inputSchema: { type: "object", properties: {}, additionalProperties: false },
       execute: () => App.page.stopBroadcast(),
@@ -170,7 +170,7 @@ class StudioActions {
   static saveScriptsAction() {
     return {
       name: "save_scripts",
-      description: "AI producer: keep scripts for upcoming stories; Elon and Sam read them when those stories come up in the nonstop broadcast. Each script is fact-checked against its story's numbers. Returns the saved story ids and any refused with a reason. Does not interrupt the broadcast.",
+      description: "AI producer: keep scripts for upcoming stories; Dex and Theo read them when those stories come up in the nonstop broadcast. Each script is fact-checked against its story's numbers. Returns the saved story ids and any refused with a reason. Does not interrupt the broadcast.",
       effect: "write",
       inputSchema: {
         type: "object",

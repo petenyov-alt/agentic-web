@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AI Radar</title>
-  <meta name="description" content="AI Radar: a live desk for people who build with AI. New models, local AI, tools, skills and MCP servers, free resources, prompts, AI security, research, competitions with deadlines and the open agentic web, read aloud from a studio desk by Elon Cache and Sam Alt-Tab. Ping the desk to ask them anything.">
+  <meta name="description" content="AI Radar: a live desk for people who build with AI. New models, local AI, tools, skills and MCP servers, free resources, prompts, AI security, research, competitions with deadlines and the open agentic web, read aloud from a studio desk by Dex Ping and Theo Sweep. Ping the desk to ask them anything.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,11 +64,11 @@
       <section id="view-radar" class="view" aria-label="Radar">
         <section class="deck" aria-labelledby="brief-title">
           <div class="deck-screen">
-            <h2 id="brief-title" class="sr-only">Alt-Cache studio</h2>
+            <h2 id="brief-title" class="sr-only">AI Radar studio</h2>
             <div id="monitor" class="monitor" data-channel="all">
               <div class="screen">
                 <canvas id="anchor-canvas" class="anchor-canvas" width="320" height="180"
-                  role="img" aria-label="Animated AI Radar studio with Sam Alt-Tab and Elon Cache at a broadcast desk under the studio monitor"></canvas>
+                  role="img" aria-label="Animated AI Radar studio with Theo Sweep and Dex Ping at a broadcast desk under the studio monitor"></canvas>
                 <a id="story-bug" class="story-bug" href="#" target="_blank" rel="noopener noreferrer" hidden>
                   <span id="bug-kicker" class="bug-kicker">ON RADAR</span>
                   <span id="bug-source" class="bug-source"></span>
@@ -125,14 +125,14 @@
           <section id="assistant" class="assistant desk-dock" data-open="false" aria-labelledby="assistant-heading">
             <header class="dock-head">
               <h2 id="assistant-heading"><span class="desk-dot" aria-hidden="true"></span>Call the desk</h2>
-              <p class="dock-sub">Ask Sam or Elon to find a model, a skill or an MCP server, explain a repo, or check something you heard.</p>
+              <p class="dock-sub">Ask Theo or Dex to find a model, a skill or an MCP server, explain a repo, or check something you heard.</p>
             </header>
             <div id="agent-app">
               <div data-ns-slot="chat"></div>
               <ul class="dock-chips" aria-label="Questions to try">
                 <li><button id="btn-ask-story" type="button" disabled>Ask about this story</button></li>
                 <li><button id="btn-ask-claim" type="button">Check a claim</button></li>
-                <li><button type="button" data-ask="Elon, find me design skills for Claude.">Find design skills</button></li>
+                <li><button type="button" data-ask="Dex, find me design skills for Claude.">Find design skills</button></li>
                 <li><button id="btn-ask-repo" type="button">Explain a repo</button></li>
               </ul>
               <p class="desk-foot">
@@ -146,7 +146,7 @@
                   <h2 id="how-title">How it works</h2>
                   <button type="button" class="btn-ghost how-close" data-close>Close</button>
                 </div>
-                <p class="how-lede">Sam Alt-Tab and Elon Cache read the feed aloud and answer your questions. They are AI parody characters: they echo the speaking style of two famous founders, but they are not those people and nothing here is something they said.</p>
+                <p class="how-lede">Theo Sweep and Dex Ping read the feed aloud and answer your questions. They are original AI characters, the radar room's night crew, not real people.</p>
                 <div class="how-grid">
                   <section class="how-card">
                     <h3>The agents</h3>
@@ -188,16 +188,16 @@
                       <div><dt>Last scan</dt><dd id="deck-scan" class="mono">--:--</dd></div>
                     </dl>
                     <ul class="voices" aria-label="The anchors">
-                      <li id="voice-sam" class="voice voice-sam" data-on="false">
+                      <li id="voice-theo" class="voice voice-theo" data-on="false">
                         <span class="voice-lamp" aria-hidden="true"></span>
-                        <span class="voice-name">Sam</span>
-                        <span class="voice-role">Sam Alt-Tab · Models, numbers, security</span>
+                        <span class="voice-name">Theo</span>
+                        <span class="voice-role">Theo Sweep · Models, numbers, security</span>
                         <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
                       </li>
-                      <li id="voice-elon" class="voice voice-elon" data-on="false">
+                      <li id="voice-dex" class="voice voice-dex" data-on="false">
                         <span class="voice-lamp" aria-hidden="true"></span>
-                        <span class="voice-name">Elon</span>
-                        <span class="voice-role">Elon Cache · Tools, open source, builders</span>
+                        <span class="voice-name">Dex</span>
+                        <span class="voice-role">Dex Ping · Tools, open source, builders</span>
                         <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
                       </li>
                     </ul>

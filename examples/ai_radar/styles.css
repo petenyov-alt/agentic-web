@@ -1,6 +1,6 @@
 /* AI Radar: the night newsroom.
    The colours come from the studio itself: its navy night, the amber of its desk lamps (what
-   you press and what is on air), Sam's cyan monitors and the radar's green (every selection:
+   you press and what is on air), Theo's cyan monitors and the radar's green (every selection:
    one 1px line as wide as its label, on the nearest edge).
    The lead: the show. The studio TV takes two thirds of the width, with one "On air" bar under
    it (what plays, who reads it, the three TV buttons) and the channel row; the desk, the only
@@ -27,8 +27,8 @@
   --primary: #f5a524;
   --primary-hover: #ffb84a;
   --on-primary: #1a1206;
-  --sam: #38bdf8;
-  --elon: #34d399;
+  --theo: #38bdf8;
+  --dex: #34d399;
   --positive: #34d399;
   --negative: #f43f5e;
   --warning: #fbbf24;
@@ -222,8 +222,8 @@ body[data-muted="true"] .mute-osd { display: block; }
 .tally[data-mode="onair"] .tally-lamp, .tally[data-mode="call"] .tally-lamp { background: var(--negative); }
 .tally[data-mode="scanning"] .tally-lamp { background: var(--accent); }
 .tally[data-mode="verifying"] .tally-lamp { background: var(--warning); }
-.tally[data-mode="mcp"] .tally-lamp { background: var(--sam); }
-.tally[data-mode="writing"] .tally-lamp { background: var(--elon); }
+.tally[data-mode="mcp"] .tally-lamp { background: var(--theo); }
+.tally[data-mode="writing"] .tally-lamp { background: var(--dex); }
 .tally[data-mode="idle"] .tally-lamp { background: var(--muted); }
 .tally:not([data-mode="off"]):not([data-mode="idle"]) .tally-lamp { animation: lamp 1.2s steps(2, jump-none) infinite; }
 @keyframes lamp { 50% { opacity: .35; } }
@@ -238,8 +238,8 @@ body[data-muted="true"] .mute-osd { display: block; }
 .voice-lamp { width: 8px; height: 8px; border-radius: 50%; background: var(--control); }
 .voice-name { color: var(--text); font-weight: 600; }
 .voice-role { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.voice-sam { --voice: var(--sam); }
-.voice-elon { --voice: var(--elon); }
+.voice-theo { --voice: var(--theo); }
+.voice-dex { --voice: var(--dex); }
 .voice[data-on="true"] .voice-lamp { background: var(--voice); }
 .voice[data-on="true"] .voice-role { color: var(--text); }
 /* the speaker's level: six bars that move only while that robot talks */
@@ -260,7 +260,7 @@ body[data-busy="true"] .desk-activity { color: var(--text); }
 .mcp-strip { margin-top: 2px; }
 .mcp-strip li { font-family: var(--font); }
 .mcp-strip li::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 6px; border-radius: 50%; background: var(--control); vertical-align: 1px; }
-.mcp-strip li[data-active="true"]::before { background: var(--sam); }
+.mcp-strip li[data-active="true"]::before { background: var(--theo); }
 
 .transport { display: flex; gap: 8px; flex: none; }
 .transport .btn-ghost { height: var(--control-height); padding: 0 14px; }

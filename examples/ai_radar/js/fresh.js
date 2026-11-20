@@ -9,7 +9,7 @@ const PLAIN = new Set(`
   been were will would could should just very really okay alright right well also then than
   them they their your yours ours it's that's here's what's let's i'm i've you're we're don't
   one's this's story stories news next more some much like look time thing things going
-  sam's elon's sam elon thanks
+  theo's dex's theo dex thanks
 `.split(/\s+/).filter(Boolean));
 
 /** The words of a line that make it recognisable, lowercased. */

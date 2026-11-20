@@ -8,16 +8,16 @@
   :root {
     --ground: #171719; --surface: #131217; --raised: #212023; --well: #0c0c10;
     --border: #2a2a2e; --text: #fff; --muted: #8a8c92; --accent: #3ddc97;
-    --sam: #3df5ff; --elon: #3dff8a; --warning: #d9a441; --note: #ffd45c;
+    --theo: #3df5ff; --dex: #3dff8a; --warning: #d9a441; --note: #ffd45c;
     --page: #0b0b0d; --bar: #1d1d20; --line: #3a3a3e; --mine: #1f3a2e; --primary: #fff; --on-primary: #000; --live: #e5566f;
     --font: "Public Sans", Inter, system-ui, sans-serif;
     --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
   }
-  /* The night newsroom: the studio's own navy, amber lamps, Sam's cyan and the radar's green. */
+  /* The night newsroom: the studio's own navy, amber lamps, Theo's cyan and the radar's green. */
   body.night {
     --page: #070b14; --ground: #0b1220; --surface: #0f1829; --raised: #18233a; --well: #070c17;
     --border: #22304a; --bar: #131c2e; --line: #34445f; --text: #f1f5f9; --muted: #9aa8bd;
-    --accent: #34d399; --sam: #38bdf8; --elon: #34d399; --warning: #fbbf24;
+    --accent: #34d399; --theo: #38bdf8; --dex: #34d399; --warning: #fbbf24;
     --primary: #f5a524; --on-primary: #1a1206; --mine: #1b3550; --live: #f43f5e;
   }
   body.night .tab.on { background: #1d2a44; }
@@ -70,7 +70,7 @@
   .desk header p { margin: 0; color: var(--muted); font-size: 13px; }
   .msgs { flex: 1; padding: 6px 16px; display: flex; flex-direction: column; gap: 10px; }
   .msg { background: var(--raised); border-radius: 10px; padding: 10px 12px; font-size: 13px; max-width: 92%; }
-  .msg b.sam { color: var(--sam); } .msg b.elon { color: var(--elon); }
+  .msg b.theo { color: var(--theo); } .msg b.dex { color: var(--dex); }
   .msg.me { align-self: flex-end; background: var(--mine); }
   .chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 16px; }
   .chip { font-size: 12px; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line); }
@@ -145,7 +145,7 @@
     <button class="btn" type="button" data-palette="" aria-pressed="false">Today's colours</button>
     <button class="btn" type="button" data-palette="night" aria-pressed="true">Night newsroom</button>
     <small id="palette-note">Navy from the studio, amber for what you press and what is on air.</small>
-    <span class="swatches"><i style="background:var(--ground)"></i><i style="background:var(--surface)"></i><i style="background:var(--primary)"></i><i style="background:var(--sam)"></i><i style="background:var(--elon)"></i><i style="background:var(--live)"></i></span>
+    <span class="swatches"><i style="background:var(--ground)"></i><i style="background:var(--surface)"></i><i style="background:var(--primary)"></i><i style="background:var(--theo)"></i><i style="background:var(--dex)"></i><i style="background:var(--live)"></i></span>
   </div>
   <p class="lede">The same studio, colours and type as today. What changes is the order: the show comes first, there is one way to ask the desk, and the technical parts move to one "How it works" panel. Yellow numbers point to the notes under each frame. The headlines are real ones from today's feed.</p>
 
@@ -165,11 +165,11 @@
         <div class="show">
           <section class="has-pin">
             <span class="pin">2</span>
-            <div class="tv"><img src="sketch-studio.png" alt="The Alt-Cache studio, as it is today"></div>
+            <div class="tv"><img src="sketch-studio.png" alt="The AI Radar studio, as it is today"></div>
             <div class="onair has-pin">
               <span class="pin">3</span>
               <span class="dot"></span>
-              <div class="what"><b>Introducing Gemini 4 Neon</b><small>Read by Sam · Google DeepMind · 1 day ago</small></div>
+              <div class="what"><b>Introducing Gemini 4 Neon</b><small>Read by Theo · Google DeepMind · 1 day ago</small></div>
               <button class="btn primary">▶ Play</button>
               <button class="btn">Next</button>
               <button class="btn">Sound on</button>
@@ -184,15 +184,15 @@
             <span class="pin">5</span>
             <header>
               <h4>Call the desk</h4>
-              <p>Ask Sam or Elon to find a model, a skill or an MCP server, explain a repo, or check something you heard.</p>
+              <p>Ask Theo or Dex to find a model, a skill or an MCP server, explain a repo, or check something you heard.</p>
             </header>
             <div class="msgs">
-              <div class="msg"><b class="elon">Elon:</b> You're through to the desk. What are we digging into?</div>
+              <div class="msg"><b class="dex">Dex:</b> You're through to the desk. What are we digging into?</div>
               <div class="msg me">Is Gemini 4 Neon really out?</div>
-              <div class="msg"><b class="sam">Sam:</b> Yes. Google DeepMind announced it on its own blog yesterday, and The Verge reports it too.</div>
+              <div class="msg"><b class="theo">Theo:</b> Yes. Google DeepMind announced it on its own blog yesterday, and The Verge reports it too.</div>
             </div>
             <div class="chips"><span class="chip">Ask about this story</span><span class="chip">Find design skills</span><span class="chip">Explain a repo</span></div>
-            <div class="ask"><div>Ask Sam or Elon…</div><button class="btn primary">Send</button></div>
+            <div class="ask"><div>Ask Theo or Dex…</div><button class="btn primary">Send</button></div>
             <div class="how has-pin"><span class="pin">6</span>6 agents and 4 research servers work behind the desk. <u>How it works</u></div>
           </aside>
         </div>
@@ -256,15 +256,15 @@
         <div class="tv has-pin"><span class="pin">A</span><img src="sketch-studio.png" alt=""></div>
         <div class="onair">
           <span class="dot"></span>
-          <div class="what"><b>Introducing Gemini 4 Neon</b><small>Read by Sam · Google DeepMind</small></div>
+          <div class="what"><b>Introducing Gemini 4 Neon</b><small>Read by Theo · Google DeepMind</small></div>
           <div class="controls has-pin"><span class="pin">B</span><button class="btn primary">▶ Play</button><button class="btn">Next</button><button class="btn">Sound</button></div>
         </div>
         <div class="tabs"><span class="tab on"><em>01</em>All</span><span class="tab"><em>02</em>Models</span><span class="tab"><em>03</em>Local</span><span class="tab">›</span></div>
         <div class="desk has-pin" style="margin-top:14px">
           <span class="pin">C</span>
-          <header><h4>Call the desk</h4><p>Ask Sam or Elon anything about AI tools and news.</p></header>
+          <header><h4>Call the desk</h4><p>Ask Theo or Dex anything about AI tools and news.</p></header>
           <div class="chips"><span class="chip">About this story</span><span class="chip">Explain a repo</span></div>
-          <div class="ask"><div>Ask Sam or Elon…</div><button class="btn primary">Send</button></div>
+          <div class="ask"><div>Ask Theo or Dex…</div><button class="btn primary">Send</button></div>
         </div>
         <div class="card" style="margin-top:14px"><h4>On this channel</h4>
           <div class="row" style="grid-template-columns:1fr 50px"><b>Kiroween 2026: an AI hackathon opens<small>Devpost · open</small></b><span class="small-btn">Ask</span></div>

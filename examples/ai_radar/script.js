@@ -18,7 +18,7 @@ import { PROMPTS, PROMPT_GROUPS } from "./js/prompts.js";
 const BROWSER = typeof window !== "undefined";
 const SILENT_ANCHOR = {
   setState() {}, setSpeaker() {}, word() {}, setMode() {}, setWork() {}, setHail() {}, setScene() {},
-  setExpression() {}, react() {}, nextHabit() { return "espresso"; }, triggerDuo() {}, names: ["Sam", "Elon"],
+  setExpression() {}, react() {}, nextHabit() { return "espresso"; }, triggerDuo() {}, names: ["Theo", "Dex"],
 };
 import { VoiceOver } from "./js/voice.js";
 import { rankStories, reportingLine } from "./js/topstory.js";
@@ -46,8 +46,8 @@ export function numbersIn(text) {
   }));
 }
 
-// Lead-ins by channel, in the voice of the one who leads it: Sam is calm and exact,
-// Elon is blunt and talks to builders.
+// Lead-ins by channel, in the voice of the one who leads it: Theo is calm and exact,
+// Dex is blunt and talks to builders.
 const TOPIC_INTROS = {
   models: ["Model watch:", "From the model labs:", "On the model front:"],
   local: ["For your own hardware:", "On the local AI desk:", "Running on your own machine:"],
@@ -61,19 +61,19 @@ const TOPIC_INTROS = {
   agentic: ["On the agentic web:", "Agents meeting agents:", "From the open agentic web:"],
 };
 
-//Who leads each channel: 0 = Sam (models, numbers, security), 1 = Elon (tools, builders, community).
-// "all": AI news the editor filed under no channel (business, funding, policy), read by Elon.
+//Who leads each channel: 0 = Theo (models, numbers, security), 1 = Dex (tools, builders, community).
+// "all": AI news the editor filed under no channel (business, funding, policy), read by Dex.
 const CAST = { models: 0, local: 0, security: 0, research: 0, projects: 0, tools: 1, free: 1, prompts: 1, events: 1, agentic: 1, all: 1 };
 const MAX_RUN = 2;   // the same anchor reads at most this many stories in a row
 
 // What the other anchor says after a story: one sentence in its own voice, with no facts,
 // so it can never state something the story did not. By the topic of the story it follows.
 const BANTER = [
-  { // Sam, after Elon's story: calm, thoughtful, weighs it up
+  { // Theo, after Dex's story: calm, thoughtful, weighs it up
     any: [
-      "Thanks, Elon. I think the interesting part is what it costs to run.",
+      "Thanks, Dex. I think the interesting part is what it costs to run.",
       "Noted and logged. The link is in the feed if you want the details.",
-      "Good find, Elon. I think the licence is worth a look before you build on it.",
+      "Good find, Dex. I think the licence is worth a look before you build on it.",
       "That's fair. I'd still test it on my own data first.",
       "I think we'll look back on this one. Hopefully fondly.",
       "The interesting thing is how fast this went from idea to something you can try.",
@@ -151,26 +151,26 @@ const BANTER = [
       "The interesting question is what happens when they disagree.",
     ],
   },
-  { // Elon, after Sam's story: blunt, casual, build-it energy
+  { // Dex, after Theo's story: blunt, casual, build-it energy
     any: [
-      "Thanks, Sam. Pretty cool. Go build something with it.",
+      "Thanks, Theo. Pretty cool. Go build something with it.",
       "Okay, that's wild. The link is in the feed.",
-      "Thanks, Sam. Honestly, just try it this weekend.",
-      "Good one, Sam. I'd ship something with that.",
-      "First principles: does it work? Then ship it.",
+      "Thanks, Theo. Honestly, just try it this weekend.",
+      "Good one, Theo. I'd ship something with that.",
+      "Simple test: does it work? Then ship it.",
       "Honestly, if it doesn't scale, what are we even doing?",
       "I'd ship that at three in the morning. That's when I ship everything.",
       "Somebody make that open source. I'll wait.",
-      "Great. Put it on a rocket.",
+      "Great. Put it on the big screen.",
       "That's a meme waiting to happen.",
       "Another week, another model. I read fast and I still can't keep up.",
       "More compute. You can never have enough compute.",
       "Ten out of ten. Would build again.",
       "The future is going to be weird. I love it.",
-      "Pretty cool. I'd still want to try it on Mars.",
+      "Pretty cool. I'd try it on my own laptop tonight.",
       "Okay, that's actually useful. Rare. I like it.",
       "Let's go. Builders, you know what to do.",
-      "Wild times, Sam. Wild times.",
+      "Wild times, Theo. Wild times.",
       "Okay. Next. The radar doesn't wait.",
       "Short version: try it.",
       "I like it. Done. Moving on.",
@@ -187,7 +187,7 @@ const BANTER = [
       "Numbers don't lie. Mostly.",
       "Bookmarked. Moving on.",
       "If it works, it works. Ship it.",
-      "Physics allows it, so somebody will build it.",
+      "If it's possible, somebody will build it.",
       "Love the ambition. Show me the demo.",
       "Sounds small. Isn't.",
       "The robots are getting better at their homework.",
@@ -209,7 +209,7 @@ const BANTER = [
       "Your graphics card finally has a day job.",
     ],
     security: [
-      "Good to know, Sam. Okay, lock it down, builders.",
+      "Good to know, Theo. Okay, lock it down, builders.",
       "Security first, then speed. Okay, mostly speed, but security first.",
       "Patch it today. Not tomorrow. Today.",
       "Update your stuff. Seriously.",
@@ -217,7 +217,7 @@ const BANTER = [
       "Attackers ship fast too. Ship your fixes faster.",
     ],
     research: [
-      "Papers today, products tomorrow. Thanks, Sam.",
+      "Papers today, products tomorrow. Thanks, Theo.",
       "I read the abstract. Honestly, that's half of research.",
       "Somebody turn that paper into an app. Go.",
       "Good paper. Now make it a product.",
@@ -235,14 +235,14 @@ const BANTER = [
   },
 ];
 
-// The radar room's two anchors, together Alt-Cache: 0 = Sam ("Sam Alt-Tab"), 1 = Elon ("Elon Cache").
-const ANCHORS = ["Sam", "Elon"];
+// The radar room's two anchors: 0 = Theo ("Theo Sweep"), 1 = Dex ("Dex Ping").
+const ANCHORS = ["Theo", "Dex"];
 
 // How each anchor frames a story that no AI producer has written yet. The headline and the
 // summary are the story's own words; only the lead-in and the sign-off are the anchor's, and
 // neither states a fact, so the station's fact-check has nothing to catch.
 const STYLE = [
-  { // Sam: calm, thoughtful
+  { // Theo: calm, thoughtful
     leads: [
       "Here's one I find interesting.", "I think this one is worth a look.", "Something worth watching today.",
       "A quieter story, but I think it matters.", "I've been looking forward to this one.", "Okay, I think this is a good one.",
@@ -300,7 +300,7 @@ const STYLE = [
       "Promising. I mean that carefully.",
     ],
   },
-  { // Elon: blunt, casual
+  { // Dex: blunt, casual
     leads: [
       "Okay, this one's pretty cool.", "Alright, check this out.", "Honestly, this is good.", "Quick one, builders.",
       "Okay, this is wild.", "Next up, and I like this one.", "Pay attention, this is a good one.", "Alright, here we go.",
@@ -352,7 +352,7 @@ const STYLE = [
 const KNOWN_OUTLETS = [...new Set(SOURCES.filter((src) => !src.bing).map((src) => src.name))];
 // A top story: big news from many outlets at once.
 const BREAKING = [
-  [ // Sam
+  [ // Theo
     "I think we need to stop for this one. It's a big story.", "This is the story of the day, I think.",
     "Let's pause the usual order. This one is big.", "I think this is genuinely big news.",
     "Okay, this is the one everyone is talking about.", "A major story just came in.",
@@ -364,7 +364,7 @@ const BREAKING = [
     "This is the headline today, I think.",
     "A big one, and I want to get it right.",
   ],
-  [ // Elon
+  [ // Dex
     "Okay, stop everything. Big one.", "Breaking. This is huge.", "Hold on. This is the big story today.",
     "Alright, drop what you're doing.", "Okay, this is massive.", "Top story, and honestly it's wild.",
     "News flash. Big one.", "Stop the presses. Well, the stream.", "This is the one. Listen up.",
@@ -378,7 +378,7 @@ const BREAKING = [
 ];
 // After answering a caller, the co-host checks the line before the news goes on.
 const ASK_MORE = [
-  [ // Sam
+  [ // Theo
     "I think that covers it. Any other questions? If not, we'll get back to the news.",
     "Does that help? Ask us anything else, or we'll carry on.",
     "Anything else on your mind? Otherwise, back to the radar.",
@@ -388,7 +388,7 @@ const ASK_MORE = [
     "Any follow-up? We're here.",
     "That's what we found. Anything else?",
   ],
-  [ // Elon
+  [ // Dex
     "Anything else you want to ask? If not, back to the news.",
     "Got more questions? Otherwise, we keep going.",
     "More questions? Fire away.",
@@ -401,8 +401,8 @@ const ASK_MORE = [
 ];
 // When a question cuts into the news, the one on air stops and takes the call.
 const CALLER_IN = [
-  [ // Sam
-    "Sorry, Elon, I think we have a caller.", "Let's pause there, someone's sent us a question.",
+  [ // Theo
+    "Sorry, Dex, I think we have a caller.", "Let's pause there, someone's sent us a question.",
     "I think someone's on the line. Let's listen.", "Just a moment, a question has come in.",
     "Oh, we have a message from the audience.", "Let's hold that thought. We have a caller.",
     "Someone's reached the desk. Let's take a look.", "I see a question coming in. One moment.",
@@ -416,7 +416,7 @@ const CALLER_IN = [
     "We'll come back to that. First, a caller.", "Good timing, a question just arrived.",
     "One moment, someone has sent the desk a message.",
   ],
-  [ // Elon
+  [ // Dex
     "Hold on, we've got a caller.", "Wait, someone's on the line.",
     "Okay, pause. We have a question from the audience.", "Quick break, someone just pinged the desk.",
     "Hang on. Message coming in to the studio.", "Oh, a caller. Let's take it.",
@@ -436,7 +436,7 @@ const CALLER_IN = [
 // never goes quiet: first that they are checking, then what the desk is doing, then that they
 // are still on it (see StudioPage._holdLine). No facts and no numbers: the answer has those.
 const HOLD_FIRST = [
-  [ // Sam
+  [ // Theo
     "Let me check that with the desk.", "Good question. Let's look into it properly.",
     "I'm sending that over to the desk now.", "Let's get you a real answer. One moment.",
     "The desk is looking into it.", "I want to get this right, so give us a moment.",
@@ -446,7 +446,7 @@ const HOLD_FIRST = [
     "Let's verify before we answer.", "Bear with me, I'm checking our notes.",
     "That's a good one. Let me look.", "We're on it. Just a moment.",
   ],
-  [ // Elon
+  [ // Dex
     "Okay, checking with the desk.", "Give me a second. Looking it up.",
     "Desk is on it.", "Let's find out. Hang tight.",
     "Good question. Running it down now.", "Pulling that up. One sec.",
@@ -458,7 +458,7 @@ const HOLD_FIRST = [
   ],
 ];
 const HOLD_STILL = [
-  [ // Sam
+  [ // Theo
     "Still checking. We'd rather be careful than quick.", "The desk is still working on it.",
     "Almost there. We're confirming the details.", "Thanks for waiting. It's worth getting right.",
     "We're cross-checking the sources.", "Still on it. Good questions take a minute.",
@@ -468,7 +468,7 @@ const HOLD_STILL = [
     "We're making sure the answer holds up.", "Still digging through the research.",
     "A few more moments.", "We haven't forgotten you. Still checking.",
   ],
-  [ // Elon
+  [ // Dex
     "Still on it.", "The desk's still digging.",
     "Almost there. Probably.", "Patience. It's worth it.",
     "Still checking. Accuracy beats speed.", "Hang on, the answer's coming.",
@@ -481,16 +481,16 @@ const HOLD_STILL = [
 ];
 // A card or dialog waits for the visitor (an outside source, or a story for air): said once.
 const HOLD_APPROVAL = [
-  [ // Sam
+  [ // Theo
     "Before we go on, we need your okay. It's on your screen.", "That step needs your approval. Take your time.",
     "It's your call. Approve it on screen, and we'll carry on.", "We'll wait for your okay on screen.",
   ],
-  [ // Elon
+  [ // Dex
     "Need your okay on that. It's on your screen.", "Your call. Approve it and we keep going.",
     "Ball's in your court. Check your screen.", "Waiting on your thumbs up. It's on screen.",
   ],
 ];
-// What the desk is doing, by the studio's kind of work (LiveDesk.AGENT_KIND): [Sam, Elon].
+// What the desk is doing, by the studio's kind of work (LiveDesk.AGENT_KIND): [Theo, Dex].
 const HOLD_WORK = {
   scanning: [
     ["I'm checking the latest reports.", "Let's see what the news reports say.", "Scanning the feeds for that now."],
@@ -529,49 +529,49 @@ const SERIOUS_LEADS = [
   ["Serious one.", "Not a fun one, but it matters.", "Heads up, this is serious.", "Bad news first."],
 ];
 
-/** The anchors' lines while the desk works on a caller's question, by pool and anchor [Sam, Elon]. */
+/** The anchors' lines while the desk works on a caller's question, by pool and anchor [Theo, Dex]. */
 export const HOLD = { first: HOLD_FIRST, still: HOLD_STILL, approval: HOLD_APPROVAL, work: HOLD_WORK };
 /** Who reads a channel's AI-written stories, by name. */
 export const leadOf = (topic) => ANCHORS[CAST[topic] ?? 1];
 export const FIND_KINDS = ["prompts", "skills", "tools", "papers"];
-// The opening is different each time: one of Elon's hellos, then one of Sam's.
+// The opening is different each time: one of Dex's hellos, then one of Theo's.
 const OPEN_ELON = [
-  "Hello, you're tuned to AI Radar. I'm Elon Cache.",
-  "Okay, we're live. This is AI Radar, I'm Elon Cache.",
-  "Welcome to AI Radar. Elon Cache here. Let's go.",
-  "You found AI Radar. Good call. I'm Elon Cache.",
-  "Lights on, radar spinning. This is AI Radar and I'm Elon Cache.",
-  "Hey, it's AI Radar. I'm Elon Cache, and honestly, there's a lot to get through.",
-  "Hey builders. Elon Cache at the AI Radar desk.",
-  "This is AI Radar, live from the Alt-Cache studio. I'm Elon Cache.",
-  "Alright, we're on. AI Radar, I'm Elon Cache. Pretty cool to have you here.",
-  "Welcome in. This is AI Radar. I'm Elon Cache, and the radar never sleeps.",
-  "AI Radar is on air. Elon Cache here. Let's see what shipped.",
-  "Hi there. You're watching AI Radar. I'm Elon Cache.",
+  "Hello, you're tuned to AI Radar. I'm Dex Ping.",
+  "Okay, we're live. This is AI Radar, I'm Dex Ping.",
+  "Welcome to AI Radar. Dex Ping here. Let's go.",
+  "You found AI Radar. Good call. I'm Dex Ping.",
+  "Lights on, radar spinning. This is AI Radar and I'm Dex Ping.",
+  "Hey, it's AI Radar. I'm Dex Ping, and honestly, there's a lot to get through.",
+  "Hey builders. Dex Ping at the AI Radar desk.",
+  "This is AI Radar, live from the radar room. I'm Dex Ping.",
+  "Alright, we're on. AI Radar, I'm Dex Ping. Pretty cool to have you here.",
+  "Welcome in. This is AI Radar. I'm Dex Ping, and the radar never sleeps.",
+  "AI Radar is on air. Dex Ping here. Let's see what shipped.",
+  "Hi there. You're watching AI Radar. I'm Dex Ping.",
 ];
 const OPEN_SAM = [
-  "And I'm Sam Alt-Tab. Together we're the Alt-Cache desk.",
-  "And I'm Sam Alt-Tab. I think it's a good moment to see what just showed up on the radar.",
-  "I'm Sam Alt-Tab. We'll go through what's new, and I'll try to keep us honest.",
-  "And I'm Sam Alt-Tab. The interesting thing is, the radar always finds something.",
-  "Sam Alt-Tab here. Ask us anything along the way, we're listening.",
-  "And I'm Sam Alt-Tab. Let's take a careful look at what's new in AI.",
-  "I'm Sam Alt-Tab. I'm genuinely excited about a few of these.",
-  "And I'm Sam Alt-Tab. If you have a question, call the desk any time.",
-  "Sam Alt-Tab, at the desk with Elon. Let's get into it.",
-  "And I'm Sam Alt-Tab. I think you'll find something worth building with today.",
-  "I'm Sam Alt-Tab. Plenty on the radar, so let's start.",
-  "And I'm Sam Alt-Tab. We read the feed so you don't have to.",
+  "And I'm Theo Sweep. Together we're the night crew.",
+  "And I'm Theo Sweep. I think it's a good moment to see what just showed up on the radar.",
+  "I'm Theo Sweep. We'll go through what's new, and I'll try to keep us honest.",
+  "And I'm Theo Sweep. The interesting thing is, the radar always finds something.",
+  "Theo Sweep here. Ask us anything along the way, we're listening.",
+  "And I'm Theo Sweep. Let's take a careful look at what's new in AI.",
+  "I'm Theo Sweep. I'm genuinely excited about a few of these.",
+  "And I'm Theo Sweep. If you have a question, call the desk any time.",
+  "Theo Sweep, at the desk with Dex. Let's get into it.",
+  "And I'm Theo Sweep. I think you'll find something worth building with today.",
+  "I'm Theo Sweep. Plenty on the radar, so let's start.",
+  "And I'm Theo Sweep. We read the feed so you don't have to.",
 ];
 const BACK_ELON = [
-  "Welcome back to AI Radar. It's Elon and Sam at the Alt-Cache desk. The radar is still spinning.",
-  "And we're back. AI Radar, Elon and Sam. Let's keep going.",
-  "Back on air. Pretty cool. Elon and Sam, still at the desk.",
+  "Welcome back to AI Radar. It's Dex and Theo in the radar room. The radar is still spinning.",
+  "And we're back. AI Radar, Dex and Theo. Let's keep going.",
+  "Back on air. Pretty cool. Dex and Theo, still at the desk.",
   "You're back on AI Radar. We never left, honestly.",
   "Welcome back. The radar kept scanning while you were away.",
-  "Okay, we're back. Elon and Sam, AI Radar. Let's see what's new.",
+  "Okay, we're back. Dex and Theo, AI Radar. Let's see what's new.",
   "AI Radar again. Good to have you back.",
-  "And we're live again. Elon here, Sam's next to me.",
+  "And we're live again. Dex here, Theo's next to me.",
 ];
 // A line from a pool, dealt like a deck, and never one that repeats what was said lately
 // (js/fresh.js): the same catchphrase does not come back a story later from another pool.
@@ -598,11 +598,11 @@ const ON_REQUEST = { speaker: 1, kind: "greeting", storyId: null, script: "You'r
  * Every fixed line the anchors can say, with who says it: openings, lead-ins, sign-offs,
  * reactions, news flashes, caller lines and station idents. The studio voices make each of
  * them once (see StudioPage.warmVoices), so on air only a story's own words are new.
- * Lines either anchor may say are listed for both. Returns [{anchor: "sam" | "elon", text}].
+ * Lines either anchor may say are listed for both. Returns [{anchor: "theo" | "dex", text}].
  */
 export function voiceLines() {
   const out = [];
-  const add = (speaker, lines) => { for (const text of lines) out.push({ anchor: speaker === 0 ? "sam" : "elon", text }); };
+  const add = (speaker, lines) => { for (const text of lines) out.push({ anchor: speaker === 0 ? "theo" : "dex", text }); };
   const both = (lines) => { add(0, lines); add(1, lines); };
   [0, 1].forEach((s) => {
     add(s, Object.values(BANTER[s]).flat());
@@ -655,10 +655,10 @@ function topicOf(id) {
   return TOPICS.find((c) => c.id === id) || TOPICS[0];
 }
 
-/** The question a visitor sends to the desk about one item: a GitHub repository goes to Sam. */
+/** The question a visitor sends to the desk about one item: a GitHub repository goes to Theo. */
 export function questionFor(item) {
   const repo = /^https?:\/\/github\.com\/([\w.-]+\/[\w.-]+)/.exec(item.url || "");
-  if (repo) return `Sam, explain what the ${repo[1]} repo does and how to start with it.`;
+  if (repo) return `Theo, explain what the ${repo[1]} repo does and how to start with it.`;
   const lead = ANCHORS[CAST[item.topic] ?? 1];
   return `${lead}, tell me more about "${item.title}" from ${item.source}, and why it matters to builders.`;
 }
@@ -688,7 +688,7 @@ export class StudioPage {
     this.history = [];
     this.airedAt = new Map();     // storyId -> last time it went on air
     this.storiesSinceIdent = 0;
-    this.lastSpeaker = 0;         // so Elon opens
+    this.lastSpeaker = 0;         // so Dex opens
     this.lastKind = null;
     this.lastStorySpeaker = null; // who read the last story, and how many in a row
     this.sameRun = 0;
@@ -874,7 +874,7 @@ export class StudioPage {
       const judged = (s) => s.origin !== "live" || !this.editor?.available || this.editor.verdicts.has(s.id);
       const next = this._nextStories(8).slice(1)
         .filter((s) => !this.aiScripts.has(s.id) && CAST[s.topic] !== undefined && judged(s));
-      const written = await this.writer.write(next, (s) => (CAST[s.topic] === 0 ? "Sam" : "Elon"));
+      const written = await this.writer.write(next, (s) => (CAST[s.topic] === 0 ? "Theo" : "Dex"));
       if (written.length && this.saveScripts(written).ok) this._prepareSoon(200);
     }, ms);
   }
@@ -958,7 +958,7 @@ export class StudioPage {
       else if (l.storyId && this.findStory(l.storyId)) jobs.push(...this._storyVoiceParts(this.findStory(l.storyId)));
     }
     for (const story of this._nextStories(2)) jobs.push(...this._storyVoiceParts(story));
-    const anchorOf = (speaker) => (speaker === 0 ? "sam" : "elon");
+    const anchorOf = (speaker) => (speaker === 0 ? "theo" : "dex");
     (async () => { for (const [text, speaker] of jobs) await this.voice.prefetch(text, anchorOf(speaker)); })();
   }
 
@@ -970,7 +970,7 @@ export class StudioPage {
   /** Pick the opening now and fetch its voices, so the first words come as the picture does. */
   _prepareOpening() {
     this._opening = this.entered ? welcomeBack() : greeting();
-    for (const line of this._opening) this.voice.prefetch(line.script, line.speaker === 0 ? "sam" : "elon");
+    for (const line of this._opening) this.voice.prefetch(line.script, line.speaker === 0 ? "theo" : "dex");
     this._prepareSoon(300);
   }
 
@@ -1038,7 +1038,7 @@ export class StudioPage {
   }
 
   /**
-   * Show what the agents are doing: Sam and Elon work at their consoles and the control deck
+   * Show what the agents are doing: Theo and Dex work at their consoles and the control deck
    * lights the active agents. activity: {kind, agents, tool, host, producer} or null.
    */
   setDeskActivity(activity) {
@@ -1049,7 +1049,7 @@ export class StudioPage {
     return { ok: true, mode: this.studioMode() };
   }
 
-  /** The line to the desk: while the visitor is in the chat dock, Elon checks the incoming line. */
+  /** The line to the desk: while the visitor is in the chat dock, Dex checks the incoming line. */
   setHail(open) {
     this.lineOpen = Boolean(open);
     this.anchor.setHail(this.lineOpen);
@@ -1259,7 +1259,7 @@ export class StudioPage {
   liveCall(anchorName, text) {
     const speaker = ANCHORS.findIndex((n) => n.toLowerCase() === String(anchorName || "").toLowerCase());
     const clean = String(text || "").replace(/[*_`#>|]/g, "").replace(/\s+/g, " ").trim().slice(0, 900);
-    if (speaker < 0 || clean.length < 2) return { ok: false, reason: "Name Elon or Sam and give the words to say." };
+    if (speaker < 0 || clean.length < 2) return { ok: false, reason: "Name Dex or Theo and give the words to say." };
     if (this.power !== "on") return { ok: false, reason: "The TV is off." };
     this._takeCall([{ storyId: null, kind: "call", speaker, script: clean }]);
     return { ok: true, anchor: ANCHORS[speaker] };
@@ -1275,7 +1275,7 @@ export class StudioPage {
     for (const line of lines.slice(0, 6)) {
       const speaker = ANCHORS.findIndex((n) => n.toLowerCase() === String(line?.anchor || "").toLowerCase());
       const clean = String(line?.text || "").replace(/[*_`#>|]/g, "").replace(/\s+/g, " ").trim().slice(0, 900);
-      if (speaker < 0 || clean.length < 2) return { ok: false, reason: "Each line names Elon or Sam and gives the words to say." };
+      if (speaker < 0 || clean.length < 2) return { ok: false, reason: "Each line names Dex or Theo and gives the words to say." };
       lineup.push({ storyId: null, kind: "call", speaker, script: clean });
     }
     if (this.power !== "on") return { ok: false, reason: "The TV is off." };
@@ -1603,7 +1603,7 @@ export class StudioPage {
     }
     this.anchor.setState("talking");
     // Body language: they look at each other on a handoff, react to breaking news,
-    // and Sam narrows his eyes on a security story.
+    // and Theo narrows his eyes on a security story.
     if (handoff) this.anchor.react("handoff");
     const justIn = story?.publishedAt && Date.now() - new Date(story.publishedAt).getTime() < JUST_IN_MS;
     if (top || (item.kind === "story" && justIn && !item.rerun)) this.anchor.react("breaking");
@@ -1718,12 +1718,12 @@ export class StudioPage {
   }
 
   /**
-   * Sam and Elon each get their own studio voice (tts-proxy.php) when the site has one,
+   * Theo and Dex each get their own studio voice (tts-proxy.php) when the site has one,
    * otherwise a distinct pitch of the browser's best male voice, so you can tell them apart.
    */
   _voiceFor(speaker) {
     const uri = this.voice.pick("male");
-    return { voiceURI: uri || undefined, pitch: speaker === 0 ? 1.04 : 0.84, anchor: speaker === 0 ? "sam" : "elon" };
+    return { voiceURI: uri || undefined, pitch: speaker === 0 ? 1.04 : 0.84, anchor: speaker === 0 ? "theo" : "dex" };
   }
 
   _onWord({ charIndex, charLength }) {
@@ -1995,7 +1995,7 @@ export class StudioPage {
       const act = element("td", undefined, "feed-act");
       const ask = element("button", "Ask", "btn-ghost");
       ask.type = "button";
-      ask.setAttribute("aria-label", `Ask Elon and Sam about: ${s.title}`);
+      ask.setAttribute("aria-label", `Ask Dex and Theo about: ${s.title}`);
       ask.addEventListener("click", () => askDesk(questionFor(s)));
       act.append(ask);
       row.append(what, meta, age, act);
@@ -2228,7 +2228,7 @@ function wireControls(page) {
   });
   // These two need the visitor's own words, so they only start the sentence.
   document.querySelector("#btn-ask-claim").addEventListener("click", () => askDesk("I heard that ", { send: false }));
-  document.querySelector("#btn-ask-repo").addEventListener("click", () => askDesk("Sam, explain what this GitHub repo does: ", { send: false }));
+  document.querySelector("#btn-ask-repo").addEventListener("click", () => askDesk("Theo, explain what this GitHub repo does: ", { send: false }));
   wireFind(page);
   window.addEventListener("hashchange", () => showView(location.hash.slice(1)));
   showView(location.hash.slice(1));
@@ -2334,7 +2334,7 @@ export function renderFind(page) {
     if (/^https?:/.test(item.url)) {
       const ask = element("button", "Ask desk", "btn-ghost");
       ask.type = "button";
-      ask.setAttribute("aria-label", `Ask Elon and Sam about: ${item.title}`);
+      ask.setAttribute("aria-label", `Ask Dex and Theo about: ${item.title}`);
       ask.addEventListener("click", () => askDesk(questionFor({ title: item.title, source: item.source, url: item.github || item.url, topic: "tools" })));
       actions.append(ask);
     }

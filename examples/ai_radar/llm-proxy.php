@@ -9,7 +9,7 @@
 // It is not an open door to a model. A request passes only when
 //   - it comes from this site's own pages (same origin),
 //   - its first message is one of this network's agent instructions, so it is one of
-//     Elon's and Sam's agents asking, not a free chat,
+//     Dex's and Theo's agents asking, not a free chat,
 //   - it has no other system message, few messages, a bounded size and a bounded tool list,
 //   - its person has not used up their hourly and daily allowance, and the site's daily
 //     allowance is not used up.

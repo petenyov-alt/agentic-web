@@ -1,10 +1,10 @@
 // AI Radar's studio: South Park construction-paper cutout TV news studio at night.
 // Hierarchical SVG cutout rig (1280x720 vector stage, native 60-FPS dt-smoothed cutout motion):
 //
-//   SAM   ("Sam Alt-Tab", right, index 0): Unbuttoned tailored deep navy blazer over a
+//   THEO   ("Theo Sweep", right, index 0): Unbuttoned tailored deep navy blazer over a
 //         minimalist heather-grey crewneck tee (with subtle white undershirt rim), tousled
-//         wavy brown hair, emerald hex lapel pin, silver smartwatch, and "AGI $7T" ceramic mug.
-//   ELON  ("Elon Cache", left, index 1): Sleek matte-black minimalist bomber jacket over
+//         wavy brown hair, emerald hex lapel pin, silver smartwatch, and "NO HYPE" ceramic mug.
+//   DEX  ("Dex Ping", left, index 1): Sleek matte-black minimalist bomber jacket over
 //         a plain charcoal-black crewneck tee, sculpted dark widow's-peak hair, subtle
 //         brushed silver "R" lapel pin (AI Radar), and matte-black "SHIP" ceramic mug.
 //
@@ -42,13 +42,13 @@ const WORK_MODE = {
 const WORKER = { thinking: 0, scanning: 0, verifying: 0, repo: 0, mcp: 1, find: 1, writing: 1 };
 
 // Shuffle-bag habit repertoires (8 solo habits each + 4 duo interactions, never repeating back-to-back).
-export const SAM_HABITS = ["espresso", "write", "flip_page", "check_watch", "chin_rest", "tablet", "type_note", "stretch"];
-export const ELON_HABITS = ["sip", "headset", "tuck_hair", "tap_pen", "check_slate", "write", "trace_scope", "stretch"];
+export const THEO_HABITS = ["espresso", "write", "flip_page", "check_watch", "chin_rest", "tablet", "type_note", "stretch"];
+export const DEX_HABITS = ["sip", "headset", "tuck_hair", "tap_pen", "check_slate", "write", "trace_scope", "stretch"];
 export const DUO_HABITS = ["duo_share", "duo_toast", "duo_glance", "duo_scope"];
 
 // Calm habits performed by the non-speaking co-anchor while listening to the speaker.
-const SAM_LISTEN_HABITS = ["chin_rest", "write", "espresso", "check_watch", "tablet", "flip_page"];
-const ELON_LISTEN_HABITS = ["chin_rest", "tap_pen", "sip", "check_slate", "write", "headset"];
+const THEO_LISTEN_HABITS = ["chin_rest", "write", "espresso", "check_watch", "tablet", "flip_page"];
+const DEX_LISTEN_HABITS = ["chin_rest", "tap_pen", "sip", "check_slate", "write", "headset"];
 
 const HABIT_MS = {
   espresso: 3600, write: 3400, flip_page: 2600, check_watch: 2200, chin_rest: 3600, tablet: 3200, type_note: 2600, stretch: 2400,
@@ -282,11 +282,11 @@ function buildCutoutHand(actorId, skinFill, strokeCol, pose, side) {
   const dir = side === "L" ? 1 : -1;
 
   if (pose === "holdMug") {
-    const isElon = actorId === "elon";
-    const mugFill = isElon ? "#090d16" : "#0284c7";
-    const mugStroke = isElon ? "#52525b" : "#090d16";
-    const rimFill = isElon ? "#27272a" : "#7dd3fc";
-    const mugLabel = isElon ? "SHIP" : "AGI";
+    const isDex = actorId === "dex";
+    const mugFill = isDex ? "#090d16" : "#0284c7";
+    const mugStroke = isDex ? "#52525b" : "#090d16";
+    const rimFill = isDex ? "#27272a" : "#7dd3fc";
+    const mugLabel = isDex ? "SHIP" : "CALM";
     return `
       <g stroke-linejoin="round" stroke-linecap="round">
         <path d="M -4.8 -1.5 L 4.8 -1.5 L 5.4 11 L -5.4 11 Z" fill="${skinFill}" stroke="${strokeCol}" stroke-width="1.35" />
@@ -713,7 +713,7 @@ function buildStudioSvgMarkup() {
   const cedarSlats = slatXs.join("");
 
   return `
-    <svg id="broadcastSvg" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI Radar urban office studio with Elon Cache and Sam Alt-Tab" style="position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;pointer-events:none;">
+    <svg id="broadcastSvg" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI Radar urban office studio with Dex Ping and Theo Sweep" style="position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0;pointer-events:none;">
       <defs>
         <!-- Warm Architectural Timber & Espresso Studio Wall -->
         <linearGradient id="wallBgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -768,11 +768,11 @@ function buildStudioSvgMarkup() {
         </clipPath>
 
         <!-- Exact Clipped Eye Apertures (Zero Stray Bars When Open!) -->
-        <clipPath id="elon-eye-clip">
+        <clipPath id="dex-eye-clip">
           <ellipse cx="-19" cy="0" rx="19" ry="22" transform="rotate(-10 -19 0)" />
           <ellipse cx="19" cy="0" rx="19" ry="22" transform="rotate(10 19 0)" />
         </clipPath>
-        <clipPath id="sam-eye-clip">
+        <clipPath id="theo-eye-clip">
           <ellipse cx="-19" cy="0" rx="19" ry="22.5" transform="rotate(-8 -19 0)" />
           <ellipse cx="19" cy="0" rx="19" ry="22.5" transform="rotate(8 19 0)" />
         </clipPath>
@@ -1079,9 +1079,9 @@ function buildStudioSvgMarkup() {
 
         <!-- 2. CHARACTERS TORSO & HEAD LAYER (AUTHENTIC LIKENESS ATTIRE) -->
         <g id="layerCharactersTorsoHead" opacity="1">
-          <!-- ELON CACHE (LEFT, x=365, y=505) : Matte-Black Minimalist Bomber Jacket + Charcoal Crew Tee -->
-          <g id="elon-root" transform="translate(365, 505)">
-            <g id="elon-waist" transform="translate(0, 0) rotate(0)">
+          <!-- DEX PING (LEFT, x=365, y=505) : Matte-Black Minimalist Bomber Jacket + Charcoal Crew Tee -->
+          <g id="dex-root" transform="translate(365, 505)">
+            <g id="dex-waist" transform="translate(0, 0) rotate(0)">
               <ellipse cx="0" cy="4" rx="68" ry="24" fill="#111318" stroke="#090d16" stroke-width="2.5" />
               <g>
                 <!-- Matte-Black Structured Bomber Jacket Body -->
@@ -1107,7 +1107,7 @@ function buildStudioSvgMarkup() {
               <path d="M -21 -128 L 21 -128 L 23 -102 Q 0 -92 -23 -102 Z" fill="#fde68a" stroke="#d97706" stroke-width="2.2" stroke-linejoin="round" />
               <path d="M -27 -111 Q 0 -97 27 -111" stroke="#27272a" stroke-width="5" fill="none" stroke-linecap="round" />
 
-              <g id="elon-neck" transform="translate(0, -124) rotate(0)">
+              <g id="dex-neck" transform="translate(0, -124) rotate(0)">
                 <circle cx="0" cy="-6" r="18" fill="#fde68a" />
                 <g transform="translate(0, -72)">
                   <ellipse cx="-72" cy="6" rx="10" ry="15" fill="#fde68a" stroke="#d97706" stroke-width="2" />
@@ -1124,30 +1124,30 @@ function buildStudioSvgMarkup() {
                   <g transform="translate(0, -6)">
                     <ellipse cx="-19" cy="0" rx="19" ry="22" transform="rotate(-10 -19 0)" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.6" />
                     <ellipse cx="19" cy="0" rx="19" ry="22" transform="rotate(10 19 0)" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.6" />
-                    <g clip-path="url(#elon-eye-clip)">
-                      <circle id="elon-pupil-L" cx="-14" cy="0" r="4.6" fill="#090d16" />
-                      <circle id="elon-pupil-R" cx="14" cy="0" r="4.6" fill="#090d16" />
-                      <circle id="elon-glint-L" cx="-12.5" cy="-1.6" r="1.4" fill="#ffffff" />
-                      <circle id="elon-glint-R" cx="15.5" cy="-1.6" r="1.4" fill="#ffffff" />
-                      <rect id="elon-lid-top" x="-44" y="-28" width="88" height="0" fill="#fef3c7" stroke="none" opacity="0" />
-                      <line id="elon-lash-top" x1="-44" y1="-28" x2="44" y2="-28" stroke="#92400e" stroke-width="2.2" opacity="0" />
-                      <rect id="elon-lid-bot" x="-44" y="28" width="88" height="0" fill="#fef3c7" stroke="none" opacity="0" />
-                      <line id="elon-lash-bot" x1="-44" y1="28" x2="44" y2="28" stroke="#b45309" stroke-width="1.5" opacity="0" />
+                    <g clip-path="url(#dex-eye-clip)">
+                      <circle id="dex-pupil-L" cx="-14" cy="0" r="4.6" fill="#090d16" />
+                      <circle id="dex-pupil-R" cx="14" cy="0" r="4.6" fill="#090d16" />
+                      <circle id="dex-glint-L" cx="-12.5" cy="-1.6" r="1.4" fill="#ffffff" />
+                      <circle id="dex-glint-R" cx="15.5" cy="-1.6" r="1.4" fill="#ffffff" />
+                      <rect id="dex-lid-top" x="-44" y="-28" width="88" height="0" fill="#fef3c7" stroke="none" opacity="0" />
+                      <line id="dex-lash-top" x1="-44" y1="-28" x2="44" y2="-28" stroke="#92400e" stroke-width="2.2" opacity="0" />
+                      <rect id="dex-lid-bot" x="-44" y="28" width="88" height="0" fill="#fef3c7" stroke="none" opacity="0" />
+                      <line id="dex-lash-bot" x1="-44" y1="28" x2="44" y2="28" stroke="#b45309" stroke-width="1.5" opacity="0" />
                     </g>
                   </g>
                   <g transform="translate(0, -33)">
-                    <polygon id="elon-brow-L" points="-42,-4 -5,-6 -4,1 -40,4" fill="#1c1917" />
-                    <polygon id="elon-brow-R" points="5,-6 42,-4 40,4 4,1" fill="#1c1917" />
+                    <polygon id="dex-brow-L" points="-42,-4 -5,-6 -4,1 -40,4" fill="#1c1917" />
+                    <polygon id="dex-brow-R" points="5,-6 42,-4 40,4 4,1" fill="#1c1917" />
                   </g>
-                  <g id="elon-mouth" transform="translate(0, 34) scale(1.42)"></g>
+                  <g id="dex-mouth" transform="translate(0, 34) scale(1.42)"></g>
                 </g>
               </g>
             </g>
           </g>
 
-          <!-- SAM ALT-TAB (RIGHT, x=915, y=505) : Unbuttoned Navy Blazer + Heather-Grey Crewneck Tee -->
-          <g id="sam-root" transform="translate(915, 505)">
-            <g id="sam-waist" transform="translate(0, 0) rotate(0)">
+          <!-- THEO SWEEP (RIGHT, x=915, y=505) : Unbuttoned Navy Blazer + Heather-Grey Crewneck Tee -->
+          <g id="theo-root" transform="translate(915, 505)">
+            <g id="theo-waist" transform="translate(0, 0) rotate(0)">
               <ellipse cx="0" cy="4" rx="64" ry="24" fill="#1e293b" stroke="#090d16" stroke-width="2.5" />
               <g>
                 <!-- Tailored Deep Navy Blazer Base -->
@@ -1160,7 +1160,7 @@ function buildStudioSvgMarkup() {
                 <polygon points="-38,-115 -14,-82 -26,-56 -46,-88" fill="#334155" stroke="#0f172a" stroke-width="1.8" stroke-linejoin="round" />
                 <polygon points="38,-115 14,-82 26,-56 46,-88" fill="#334155" stroke="#0f172a" stroke-width="1.8" stroke-linejoin="round" />
                 <line x1="34" y1="-44" x2="54" y2="-44" stroke="#64748b" stroke-width="2.2" />
-                <!-- Emerald OpenAI-nod Hex Pin on Sam's Blazer Lapel -->
+                <!-- Emerald OpenAI-nod Hex Pin on Theo's Blazer Lapel -->
                 <g transform="translate(33, -78)">
                   <circle cx="0" cy="0" r="8.5" fill="#10b981" stroke="#ffffff" stroke-width="1.6" />
                   <polygon points="0,-5 4.8,-1.5 3.2,4.5 -3.2,4.5 -4.8,-1.5" fill="none" stroke="#ffffff" stroke-width="1.5" />
@@ -1173,7 +1173,7 @@ function buildStudioSvgMarkup() {
               <path d="M -24 -111 Q 0 -96 24 -111" stroke="#f8fafc" stroke-width="4.5" fill="none" stroke-linecap="round" />
               <path d="M -26 -108 Q 0 -93 26 -108" stroke="#64748b" stroke-width="4" fill="none" stroke-linecap="round" />
 
-              <g id="sam-neck" transform="translate(0, -122) rotate(0)">
+              <g id="theo-neck" transform="translate(0, -122) rotate(0)">
                 <circle cx="0" cy="-6" r="17.5" fill="#fed7aa" />
                 <g transform="translate(0, -72)">
                   <ellipse cx="-70" cy="6" rx="10" ry="15" fill="#ffedd5" stroke="#d97706" stroke-width="2" />
@@ -1191,22 +1191,22 @@ function buildStudioSvgMarkup() {
                   <g transform="translate(0, -6)">
                     <ellipse cx="-19" cy="0" rx="19" ry="22.5" transform="rotate(-8 -19 0)" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.6" />
                     <ellipse cx="19" cy="0" rx="19" ry="22.5" transform="rotate(8 19 0)" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.6" />
-                    <g clip-path="url(#sam-eye-clip)">
-                      <circle id="sam-pupil-L" cx="-14" cy="0" r="4.6" fill="#090d16" />
-                      <circle id="sam-pupil-R" cx="14" cy="0" r="4.6" fill="#090d16" />
-                      <circle id="sam-glint-L" cx="-12.5" cy="-1.6" r="1.4" fill="#ffffff" />
-                      <circle id="sam-glint-R" cx="15.5" cy="-1.6" r="1.4" fill="#ffffff" />
-                      <rect id="sam-lid-top" x="-44" y="-28" width="88" height="0" fill="#ffedd5" stroke="none" opacity="0" />
-                      <line id="sam-lash-top" x1="-44" y1="-28" x2="44" y2="-28" stroke="#92400e" stroke-width="2.2" opacity="0" />
-                      <rect id="sam-lid-bot" x="-44" y="28" width="88" height="0" fill="#ffedd5" stroke="none" opacity="0" />
-                      <line id="sam-lash-bot" x1="-44" y1="28" x2="44" y2="28" stroke="#b45309" stroke-width="1.5" opacity="0" />
+                    <g clip-path="url(#theo-eye-clip)">
+                      <circle id="theo-pupil-L" cx="-14" cy="0" r="4.6" fill="#090d16" />
+                      <circle id="theo-pupil-R" cx="14" cy="0" r="4.6" fill="#090d16" />
+                      <circle id="theo-glint-L" cx="-12.5" cy="-1.6" r="1.4" fill="#ffffff" />
+                      <circle id="theo-glint-R" cx="15.5" cy="-1.6" r="1.4" fill="#ffffff" />
+                      <rect id="theo-lid-top" x="-44" y="-28" width="88" height="0" fill="#ffedd5" stroke="none" opacity="0" />
+                      <line id="theo-lash-top" x1="-44" y1="-28" x2="44" y2="-28" stroke="#92400e" stroke-width="2.2" opacity="0" />
+                      <rect id="theo-lid-bot" x="-44" y="28" width="88" height="0" fill="#ffedd5" stroke="none" opacity="0" />
+                      <line id="theo-lash-bot" x1="-44" y1="28" x2="44" y2="28" stroke="#b45309" stroke-width="1.5" opacity="0" />
                     </g>
                   </g>
                   <g transform="translate(0, -33)">
-                    <polygon id="sam-brow-L" points="-42,-3 -5,-8 -4,0 -40,4" fill="#4a2e19" />
-                    <polygon id="sam-brow-R" points="5,-8 42,-3 40,4 4,0" fill="#4a2e19" />
+                    <polygon id="theo-brow-L" points="-42,-3 -5,-8 -4,0 -40,4" fill="#4a2e19" />
+                    <polygon id="theo-brow-R" points="5,-8 42,-3 40,4 4,0" fill="#4a2e19" />
                   </g>
-                  <g id="sam-mouth" transform="translate(0, 34) scale(1.42)"></g>
+                  <g id="theo-mouth" transform="translate(0, 34) scale(1.42)"></g>
                 </g>
               </g>
             </g>
@@ -1226,56 +1226,56 @@ function buildStudioSvgMarkup() {
             <polygon points="-160,-36 160,-36 176,36 -176,36" fill="#090d16" stroke="#f59e0b" stroke-width="4" stroke-linejoin="round" />
             <polygon points="-150,-28 150,-28 163,28 -163,28" fill="#172554" />
             <text x="0" y="-2" text-anchor="middle" font-family="Public Sans, system-ui, sans-serif" font-weight="800" font-size="25" fill="#fbbf24" letter-spacing="2">AI RADAR</text>
-            <text x="0" y="20" text-anchor="middle" font-family="Public Sans, system-ui, sans-serif" font-weight="800" font-size="11" fill="#f8fafc" letter-spacing="1">ALT-CACHE STUDIO &#8226; LIVE DESK</text>
+            <text x="0" y="20" text-anchor="middle" font-family="Public Sans, system-ui, sans-serif" font-weight="800" font-size="11" fill="#f8fafc" letter-spacing="1">THE RADAR ROOM &#8226; LIVE DESK</text>
           </g>
         </g>
 
         <!-- 4. DESK PROPS LAYER (PLACED BEFORE FOREGROUND ARMS SO HANDS NEVER GO UNDER NOTEPADS!) -->
         <g id="layerDeskProps" opacity="1">
-          <!-- Elon's Matte Black "SHIP" Mug (Outer Left Wing) -->
-          <g id="elon-mug-desk" transform="translate(204, 464)">
+          <!-- Dex's Matte Black "SHIP" Mug (Outer Left Wing) -->
+          <g id="dex-mug-desk" transform="translate(204, 464)">
             <path d="M -20 -15 C -29 -15, -29 13, -20 13" stroke="#3f3f46" stroke-width="5" fill="none" />
             <rect x="-20" y="-21" width="40" height="40" rx="5" fill="#090d16" stroke="#52525b" stroke-width="2.2" />
             <ellipse cx="0" cy="-21" rx="20" ry="5" fill="#27272a" stroke="#52525b" stroke-width="1.6" />
             <text x="0" y="6" text-anchor="middle" font-family="Public Sans, system-ui, sans-serif" font-weight="800" font-size="11" fill="#f8fafc">SHIP</text>
           </g>
 
-          <!-- Elon's Desk Tablet Dock -->
-          <g id="elon-tablet-desk" transform="translate(262, 479)">
+          <!-- Dex's Desk Tablet Dock -->
+          <g id="dex-tablet-desk" transform="translate(262, 479)">
             <polygon points="-22,0 14,-4 20,11 -16,14" fill="#0f172a" stroke="#38bdf8" stroke-width="1.6" />
             <line x1="-12" y1="4" x2="8" y2="2" stroke="#34d399" stroke-width="2" />
           </g>
 
-          <!-- Elon's Notepad & Stylus (Cleanly centered between resting hands!) -->
-          <g id="elon-pad-desk" transform="translate(358, 478)">
+          <!-- Dex's Notepad & Stylus (Cleanly centered between resting hands!) -->
+          <g id="dex-pad-desk" transform="translate(358, 478)">
             <polygon points="-19,-4 17,-6 21,9 -15,11" fill="#f8fafc" stroke="#64748b" stroke-width="1.4" />
             <line x1="-11" y1="2" x2="9" y2="1" stroke="#94a3b8" stroke-width="1.6" />
           </g>
-          <g id="elon-pen-desk" transform="translate(392, 479)">
+          <g id="dex-pen-desk" transform="translate(392, 479)">
             <line x1="-9" y1="3" x2="9" y2="-3" stroke="#fbbf24" stroke-width="3.2" stroke-linecap="round" />
           </g>
 
-          <!-- Sam's "AGI $7T" Ceramic Mug (Outer Right Wing, Two Stacked Lines Fitting Comfortably Inside 40px!) -->
-          <g id="sam-mug-desk" transform="translate(1076, 464)">
+          <!-- Theo's "NO HYPE" Ceramic Mug (Outer Right Wing, Two Stacked Lines Fitting Comfortably Inside 40px!) -->
+          <g id="theo-mug-desk" transform="translate(1076, 464)">
             <path d="M 20 -15 C 29 -15, 29 13, 20 13" stroke="#e0f2fe" stroke-width="5" fill="none" />
             <rect x="-20" y="-21" width="40" height="40" rx="5" fill="#0284c7" stroke="#090d16" stroke-width="2.2" />
             <ellipse cx="0" cy="-21" rx="20" ry="5" fill="#7dd3fc" stroke="#090d16" stroke-width="1.6" />
-            <text x="0" y="-1" text-anchor="middle" font-family="Public Sans, system-ui, sans-serif" font-weight="800" font-size="9" fill="#ffffff">AGI</text>
-            <text x="0" y="10" text-anchor="middle" font-family="Public Sans, system-ui, sans-serif" font-weight="800" font-size="8.5" fill="#e0f2fe">$7T</text>
+            <text x="0" y="-1" text-anchor="middle" font-family="Public Sans, system-ui, sans-serif" font-weight="800" font-size="9" fill="#ffffff">NO</text>
+            <text x="0" y="10" text-anchor="middle" font-family="Public Sans, system-ui, sans-serif" font-weight="800" font-size="8.5" fill="#e0f2fe">HYPE</text>
           </g>
 
-          <!-- Sam's Desk Tablet -->
-          <g id="sam-tablet-desk" transform="translate(1018, 479)">
+          <!-- Theo's Desk Tablet -->
+          <g id="theo-tablet-desk" transform="translate(1018, 479)">
             <polygon points="-14,-4 22,0 16,14 -20,11" fill="#0f172a" stroke="#38bdf8" stroke-width="1.6" />
             <line x1="-8" y1="2" x2="12" y2="4" stroke="#38bdf8" stroke-width="2" />
           </g>
 
-          <!-- Sam's Notepad & Stylus (Cleanly centered between resting hands!) -->
-          <g id="sam-pad-desk" transform="translate(905, 478)">
+          <!-- Theo's Notepad & Stylus (Cleanly centered between resting hands!) -->
+          <g id="theo-pad-desk" transform="translate(905, 478)">
             <polygon points="-17,-6 19,-4 15,11 -21,9" fill="#f8fafc" stroke="#64748b" stroke-width="1.4" />
             <line x1="-9" y1="1" x2="11" y2="2" stroke="#94a3b8" stroke-width="1.6" />
           </g>
-          <g id="sam-pen-desk" transform="translate(936, 479)">
+          <g id="theo-pen-desk" transform="translate(936, 479)">
             <line x1="-9" y1="-3" x2="9" y2="3" stroke="#fbbf24" stroke-width="3.2" stroke-linecap="round" />
           </g>
 
@@ -1290,55 +1290,55 @@ function buildStudioSvgMarkup() {
 
         <!-- 5. FOREGROUND ARTICULATED CUTOUT ARMS & ATTACHED HANDS -->
         <g id="layerForegroundArms" opacity="1">
-          <!-- ELON LEFT ARM (Matte-Black Bomber Sleeve; cuff encloses wrist socket at y=33..44) -->
-          <g id="elon-shoulder-L" transform="translate(300, 408) rotate(22)">
+          <!-- DEX LEFT ARM (Matte-Black Bomber Sleeve; cuff encloses wrist socket at y=33..44) -->
+          <g id="dex-shoulder-L" transform="translate(300, 408) rotate(22)">
             <circle cx="0" cy="0" r="18" fill="#14161d" stroke="#090d16" stroke-width="2.4" />
             <path d="M -18 0 L 18 0 L 16.5 48 A 16.5 16.5 0 0 1 -16.5 48 Z" fill="#14161d" stroke="#090d16" stroke-width="2.4" stroke-linejoin="round" />
             <rect x="-16" y="-2" width="32" height="8" fill="#14161d" />
-            <g id="elon-elbow-L" transform="translate(0, 48) rotate(-62)">
+            <g id="dex-elbow-L" transform="translate(0, 48) rotate(-62)">
               <circle cx="0" cy="0" r="15.5" fill="#1a1d26" stroke="#090d16" stroke-width="2.4" />
               <path d="M -15.5 0 L 15.5 0 L 14 42 A 13 6 0 0 1 -14 42 Z" fill="#1a1d26" stroke="#090d16" stroke-width="2.4" stroke-linejoin="round" />
               <rect x="-13.5" y="-2" width="27" height="8" fill="#1a1d26" />
               <path d="M -9 3 Q 0 8 9 3" stroke="#090d16" stroke-width="2" fill="none" stroke-linecap="round" />
               <ellipse cx="0" cy="39" rx="11" ry="4" fill="#090d16" />
-              <g id="elon-wrist-L" transform="translate(0, 42) rotate(20)">
-                <g id="elon-hand-L" transform="scale(1.36)"></g>
+              <g id="dex-wrist-L" transform="translate(0, 42) rotate(20)">
+                <g id="dex-hand-L" transform="scale(1.36)"></g>
               </g>
               <path d="M -14.5 33 Q 0 38 14.5 33 L 14 43 Q 0 47 -14 43 Z" fill="#27272a" stroke="#090d16" stroke-width="2" stroke-linejoin="round" />
             </g>
           </g>
 
-          <!-- ELON RIGHT ARM (Matte-Black Bomber Sleeve) -->
-          <g id="elon-shoulder-R" transform="translate(430, 408) rotate(-22)">
+          <!-- DEX RIGHT ARM (Matte-Black Bomber Sleeve) -->
+          <g id="dex-shoulder-R" transform="translate(430, 408) rotate(-22)">
             <circle cx="0" cy="0" r="18" fill="#14161d" stroke="#090d16" stroke-width="2.4" />
             <path d="M -18 0 L 18 0 L 16.5 48 A 16.5 16.5 0 0 1 -16.5 48 Z" fill="#14161d" stroke="#090d16" stroke-width="2.4" stroke-linejoin="round" />
             <rect x="-16" y="-2" width="32" height="8" fill="#14161d" />
-            <g id="elon-elbow-R" transform="translate(0, 48) rotate(62)">
+            <g id="dex-elbow-R" transform="translate(0, 48) rotate(62)">
               <circle cx="0" cy="0" r="15.5" fill="#1a1d26" stroke="#090d16" stroke-width="2.4" />
               <path d="M -15.5 0 L 15.5 0 L 14 42 A 13 6 0 0 1 -14 42 Z" fill="#1a1d26" stroke="#090d16" stroke-width="2.4" stroke-linejoin="round" />
               <rect x="-13.5" y="-2" width="27" height="8" fill="#1a1d26" />
               <path d="M -9 3 Q 0 8 9 3" stroke="#090d16" stroke-width="2" fill="none" stroke-linecap="round" />
               <ellipse cx="0" cy="39" rx="11" ry="4" fill="#090d16" />
-              <g id="elon-wrist-R" transform="translate(0, 42) rotate(-20)">
-                <g id="elon-hand-R" transform="scale(1.36)"></g>
+              <g id="dex-wrist-R" transform="translate(0, 42) rotate(-20)">
+                <g id="dex-hand-R" transform="scale(1.36)"></g>
               </g>
               <path d="M -14.5 33 Q 0 38 14.5 33 L 14 43 Q 0 47 -14 43 Z" fill="#27272a" stroke="#090d16" stroke-width="2" stroke-linejoin="round" />
             </g>
           </g>
 
-          <!-- SAM LEFT ARM (Tailored Navy Blazer Sleeve + Silver Smartwatch Flush Above Cuff) -->
-          <g id="sam-shoulder-L" transform="translate(855, 410) rotate(22)">
+          <!-- THEO LEFT ARM (Tailored Navy Blazer Sleeve + Silver Smartwatch Flush Above Cuff) -->
+          <g id="theo-shoulder-L" transform="translate(855, 410) rotate(22)">
             <circle cx="0" cy="0" r="17.5" fill="#1e293b" stroke="#090d16" stroke-width="2.4" />
             <path d="M -17.5 0 L 17.5 0 L 16 47 A 16 16 0 0 1 -16 47 Z" fill="#1e293b" stroke="#090d16" stroke-width="2.4" stroke-linejoin="round" />
             <rect x="-15.5" y="-2" width="31" height="8" fill="#1e293b" />
-            <g id="sam-elbow-L" transform="translate(0, 47) rotate(-62)">
+            <g id="theo-elbow-L" transform="translate(0, 47) rotate(-62)">
               <circle cx="0" cy="0" r="15" fill="#273449" stroke="#090d16" stroke-width="2.4" />
               <path d="M -15 0 L 15 0 L 13.5 41 A 12.5 6 0 0 1 -13.5 41 Z" fill="#273449" stroke="#090d16" stroke-width="2.4" stroke-linejoin="round" />
               <rect x="-13" y="-2" width="26" height="8" fill="#273449" />
               <path d="M -9 3 Q 0 8 9 3" stroke="#0f172a" stroke-width="2" fill="none" stroke-linecap="round" />
               <ellipse cx="0" cy="38" rx="10.5" ry="4" fill="#090d16" />
-              <g id="sam-wrist-L" transform="translate(0, 41) rotate(20)">
-                <g id="sam-hand-L" transform="scale(1.36)"></g>
+              <g id="theo-wrist-L" transform="translate(0, 41) rotate(20)">
+                <g id="theo-hand-L" transform="scale(1.36)"></g>
               </g>
               <!-- Clean Blazer Cuff Overlapping Wrist Base + Silver Smartwatch Flush Across Sleeve -->
               <path d="M -14 33 Q 0 38 14 33 L 13.5 43 Q 0 47 -13.5 43 Z" fill="#1e293b" stroke="#090d16" stroke-width="2" stroke-linejoin="round" />
@@ -1348,19 +1348,19 @@ function buildStudioSvgMarkup() {
             </g>
           </g>
 
-          <!-- SAM RIGHT ARM (Tailored Navy Blazer Sleeve) -->
-          <g id="sam-shoulder-R" transform="translate(975, 410) rotate(-22)">
+          <!-- THEO RIGHT ARM (Tailored Navy Blazer Sleeve) -->
+          <g id="theo-shoulder-R" transform="translate(975, 410) rotate(-22)">
             <circle cx="0" cy="0" r="17.5" fill="#1e293b" stroke="#090d16" stroke-width="2.4" />
             <path d="M -17.5 0 L 17.5 0 L 16 47 A 16 16 0 0 1 -16 47 Z" fill="#1e293b" stroke="#090d16" stroke-width="2.4" stroke-linejoin="round" />
             <rect x="-15.5" y="-2" width="31" height="8" fill="#1e293b" />
-            <g id="sam-elbow-R" transform="translate(0, 47) rotate(62)">
+            <g id="theo-elbow-R" transform="translate(0, 47) rotate(62)">
               <circle cx="0" cy="0" r="15" fill="#273449" stroke="#090d16" stroke-width="2.4" />
               <path d="M -15 0 L 15 0 L 13.5 41 A 12.5 6 0 0 1 -13.5 41 Z" fill="#273449" stroke="#090d16" stroke-width="2.4" stroke-linejoin="round" />
               <rect x="-13" y="-2" width="26" height="8" fill="#273449" />
               <path d="M -9 3 Q 0 8 9 3" stroke="#0f172a" stroke-width="2" fill="none" stroke-linecap="round" />
               <ellipse cx="0" cy="38" rx="10.5" ry="4" fill="#090d16" />
-              <g id="sam-wrist-R" transform="translate(0, 41) rotate(-20)">
-                <g id="sam-hand-R" transform="scale(1.36)"></g>
+              <g id="theo-wrist-R" transform="translate(0, 41) rotate(-20)">
+                <g id="theo-hand-R" transform="scale(1.36)"></g>
               </g>
               <path d="M -14 33 Q 0 38 14 33 L 13.5 43 Q 0 47 -13.5 43 Z" fill="#1e293b" stroke="#090d16" stroke-width="2" stroke-linejoin="round" />
               <circle cx="8" cy="38.5" r="1.8" fill="#64748b" />
@@ -1401,7 +1401,7 @@ export class PixelAnchor {
     this.work = null;
     this.hail = false;
     this.ping = null;
-    this.speaker = 0; // 0 = Sam ("Sam Alt-Tab"), 1 = Elon ("Elon Cache")
+    this.speaker = 0; // 0 = Theo ("Theo Sweep"), 1 = Dex ("Dex Ping")
     this.scene = { code: 1, sector: -1, count: 0, blips: [] };
     this.habitBags = { 0: [], 1: [], duo: [], listen0: [], listen1: [] };
     this.lastHabit = { 0: null, 1: null, duo: null, listen0: null, listen1: null };
@@ -1423,8 +1423,8 @@ export class PixelAnchor {
     this._lastSweepAt = 0;
 
     this.rig = {
-      0: this.createRigState("sam", now),
-      1: this.createRigState("elon", now),
+      0: this.createRigState("theo", now),
+      1: this.createRigState("dex", now),
     };
 
     this.mountSvgStage();
@@ -1498,35 +1498,35 @@ export class PixelAnchor {
     const q = (id) => svg.querySelector(`#${id}`);
     this.actors = {
       0: {
-        id: "sam",
+        id: "theo",
         seatX: 915, seatY: 505, skinFill: "#ffedd5", skinStroke: "#d97706",
         shoulderOffsetL: { x: -60, y: -95 }, shoulderOffsetR: { x: 60, y: -95 },
         elbowLen: 47, wristLen: 41, neckBaseY: -122,
-        waist: q("sam-waist"), neck: q("sam-neck"),
-        shoulderL: q("sam-shoulder-L"), elbowL: q("sam-elbow-L"), wristL: q("sam-wrist-L"), handL: q("sam-hand-L"),
-        shoulderR: q("sam-shoulder-R"), elbowR: q("sam-elbow-R"), wristR: q("sam-wrist-R"), handR: q("sam-hand-R"),
-        mouth: q("sam-mouth"), pupilL: q("sam-pupil-L"), pupilR: q("sam-pupil-R"),
-        glintL: q("sam-glint-L"), glintR: q("sam-glint-R"),
-        lidTop: q("sam-lid-top"), lidBot: q("sam-lid-bot"),
-        lashTop: q("sam-lash-top"), lashBot: q("sam-lash-bot"),
-        browL: q("sam-brow-L"), browR: q("sam-brow-R"),
-        deskProps: { mug: q("sam-mug-desk"), pen: q("sam-pen-desk"), pad: q("sam-pad-desk"), tablet: q("sam-tablet-desk") },
+        waist: q("theo-waist"), neck: q("theo-neck"),
+        shoulderL: q("theo-shoulder-L"), elbowL: q("theo-elbow-L"), wristL: q("theo-wrist-L"), handL: q("theo-hand-L"),
+        shoulderR: q("theo-shoulder-R"), elbowR: q("theo-elbow-R"), wristR: q("theo-wrist-R"), handR: q("theo-hand-R"),
+        mouth: q("theo-mouth"), pupilL: q("theo-pupil-L"), pupilR: q("theo-pupil-R"),
+        glintL: q("theo-glint-L"), glintR: q("theo-glint-R"),
+        lidTop: q("theo-lid-top"), lidBot: q("theo-lid-bot"),
+        lashTop: q("theo-lash-top"), lashBot: q("theo-lash-bot"),
+        browL: q("theo-brow-L"), browR: q("theo-brow-R"),
+        deskProps: { mug: q("theo-mug-desk"), pen: q("theo-pen-desk"), pad: q("theo-pad-desk"), tablet: q("theo-tablet-desk") },
         cache: {},
       },
       1: {
-        id: "elon",
+        id: "dex",
         seatX: 365, seatY: 505, skinFill: "#fde68a", skinStroke: "#d97706",
         shoulderOffsetL: { x: -65, y: -97 }, shoulderOffsetR: { x: 65, y: -97 },
         elbowLen: 48, wristLen: 42, neckBaseY: -124,
-        waist: q("elon-waist"), neck: q("elon-neck"),
-        shoulderL: q("elon-shoulder-L"), elbowL: q("elon-elbow-L"), wristL: q("elon-wrist-L"), handL: q("elon-hand-L"),
-        shoulderR: q("elon-shoulder-R"), elbowR: q("elon-elbow-R"), wristR: q("elon-wrist-R"), handR: q("elon-hand-R"),
-        mouth: q("elon-mouth"), pupilL: q("elon-pupil-L"), pupilR: q("elon-pupil-R"),
-        glintL: q("elon-glint-L"), glintR: q("elon-glint-R"),
-        lidTop: q("elon-lid-top"), lidBot: q("elon-lid-bot"),
-        lashTop: q("elon-lash-top"), lashBot: q("elon-lash-bot"),
-        browL: q("elon-brow-L"), browR: q("elon-brow-R"),
-        deskProps: { mug: q("elon-mug-desk"), pen: q("elon-pen-desk"), pad: q("elon-pad-desk"), tablet: q("elon-tablet-desk") },
+        waist: q("dex-waist"), neck: q("dex-neck"),
+        shoulderL: q("dex-shoulder-L"), elbowL: q("dex-elbow-L"), wristL: q("dex-wrist-L"), handL: q("dex-hand-L"),
+        shoulderR: q("dex-shoulder-R"), elbowR: q("dex-elbow-R"), wristR: q("dex-wrist-R"), handR: q("dex-hand-R"),
+        mouth: q("dex-mouth"), pupilL: q("dex-pupil-L"), pupilR: q("dex-pupil-R"),
+        glintL: q("dex-glint-L"), glintR: q("dex-glint-R"),
+        lidTop: q("dex-lid-top"), lidBot: q("dex-lid-bot"),
+        lashTop: q("dex-lash-top"), lashBot: q("dex-lash-bot"),
+        browL: q("dex-brow-L"), browR: q("dex-brow-R"),
+        deskProps: { mug: q("dex-mug-desk"), pen: q("dex-pen-desk"), pad: q("dex-pad-desk"), tablet: q("dex-tablet-desk") },
         cache: {},
       },
     };
@@ -1558,9 +1558,9 @@ export class PixelAnchor {
    */
   nextHabit(slot = 0) {
     const source = slot === "duo" ? DUO_HABITS
-      : slot === "listen0" ? SAM_LISTEN_HABITS
-      : slot === "listen1" ? ELON_LISTEN_HABITS
-      : slot === 0 ? SAM_HABITS : ELON_HABITS;
+      : slot === "listen0" ? THEO_LISTEN_HABITS
+      : slot === "listen1" ? DEX_LISTEN_HABITS
+      : slot === 0 ? THEO_HABITS : DEX_HABITS;
     let bag = this.habitBags[slot];
     if (!bag || !bag.length) {
       bag = [...source];
@@ -1591,7 +1591,7 @@ export class PixelAnchor {
   }
 
   get names() {
-    return ["Sam", "Elon"];
+    return ["Theo", "Dex"];
   }
 
   get mode() {
@@ -1771,7 +1771,7 @@ export class PixelAnchor {
       };
     };
 
-    if (/\b(sam|elon|thanks|thank|agreed|you|your)\b/i.test(clean)) {
+    if (/\b(theo|dex|thanks|thank|agreed|you|your)\b/i.test(clean)) {
       this.setExpression(spk, "warmth", 1900);
       this.setExpression(lst, "warmth", 1900);
       this.rig[lst].nodUntil = now + 340;
@@ -1787,7 +1787,7 @@ export class PixelAnchor {
     if (now < this.rig[spk].moveUntil || now - this.lastSpeakerGestureAt < 2100) return;
 
     let chosen = null;
-    if (/\b(sam|elon|thanks|you)\b/i.test(clean)) chosen = pickFrom("partner", "warmth");
+    if (/\b(theo|dex|thanks|you)\b/i.test(clean)) chosen = pickFrom("partner", "warmth");
     else if (/(\d+%?|benchmark|score|tokens|latency|two|three|first|second)/i.test(clean)) chosen = pickFrom("metrics", "analytical");
     else if (/\b(cve|security|risk|warning|patch|critical)\b/i.test(clean)) chosen = pickFrom("security", "security");
     else if (/\b(github|repo|cli|code|mcp|agent|radar|scan)\b/i.test(clean)) chosen = pickFrom("hardware", "technical");
@@ -1853,10 +1853,10 @@ export class PixelAnchor {
     }
   }
 
-  /** Mirror symmetric template arm coordinates cleanly so Left (Elon) and Right (Sam) mirror properly. */
+  /** Mirror symmetric template arm coordinates cleanly so Left (Dex) and Right (Theo) mirror properly. */
   resolveTargetAnglesForActor(index, move, talking, now) {
-    const isSam = index === 0;
-    const dir = isSam ? -1 : 1;
+    const isTheo = index === 0;
+    const dir = isTheo ? -1 : 1;
 
     if (now > this.rig[index].moveUntil && !talking && !this.rig[index].activeProp) {
       move = MOVE_TEMPLATES.groundedRest;
@@ -1877,14 +1877,14 @@ export class PixelAnchor {
       waist: (move.waist || 0) * dir,
       neck: (move.neck || 0) * dir + nodOffset * 0.6,
       neckY: nodOffset * 0.4,
-      shL: isSam ? -shR : shL,
-      elL: isSam ? -elR : elL,
-      wrL: isSam ? -wrR : wrL,
-      hL: isSam ? move.hR : move.hL,
-      shR: isSam ? -shL : shR,
-      elR: isSam ? -elL : elR,
-      wrR: isSam ? -wrL : wrR,
-      hR: isSam ? move.hL : move.hR,
+      shL: isTheo ? -shR : shL,
+      elL: isTheo ? -elR : elL,
+      wrL: isTheo ? -wrR : wrL,
+      hL: isTheo ? move.hR : move.hL,
+      shR: isTheo ? -shL : shR,
+      elR: isTheo ? -elL : elR,
+      wrR: isTheo ? -wrL : wrR,
+      hR: isTheo ? move.hL : move.hR,
       gazeX: (move.gazeP || 0) * dir * 4.2,
     };
   }
@@ -2062,7 +2062,7 @@ export class PixelAnchor {
 
     // Phoneme-Synchronized Lip Articulation
     const isSpeaker = this.state === "talking" && this.speaker === index;
-    let viseme = r.facs.restMouth || (actor.id === "elon" ? "smug" : "neutral");
+    let viseme = r.facs.restMouth || (actor.id === "dex" ? "smug" : "neutral");
     if (isSpeaker) {
       const elapsedInWord = now - this.lastWordAt;
       if (elapsedInWord < this.wordDurationMs && this.visemeSeq.length) {
