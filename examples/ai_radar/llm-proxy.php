@@ -52,6 +52,25 @@ const DEFAULTS = [
   'partner_networks' => ['https://deadline-desk-agent.vercel.app/deadline_desk.network.json'],
 ];
 
+/**
+ * The folders that may hold the key file and the caches, most private first: the folder above
+ * the web folder, and when the web folder is a subdomain's folder inside public_html (as on
+ * DonWeb, cPanel and Plesk), the folder above public_html before it, so nothing lands where the
+ * main site serves files.
+ */
+if (!function_exists('radar_private_dirs')) {
+  function radar_private_dirs(): array {
+    $out = [];
+    $bases = !empty($_SERVER['DOCUMENT_ROOT']) ? [rtrim($_SERVER['DOCUMENT_ROOT'], '/'), __DIR__] : [__DIR__];
+    foreach ($bases as $base) {
+      $up = dirname($base);
+      if (in_array(strtolower(basename($up)), ['public_html', 'httpdocs', 'htdocs'], true)) $out[] = dirname($up);
+      $out[] = $up;
+    }
+    return array_values(array_unique($out));
+  }
+}
+
 function config(): array {
   static $cfg = null;
   if ($cfg !== null) return $cfg;
@@ -61,8 +80,7 @@ function config(): array {
     $files = [getenv('AI_RADAR_SECRET_FILE')];
   } else {
     $files = [];
-    if (!empty($_SERVER['DOCUMENT_ROOT'])) $files[] = rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/../ai-radar-secret.php';
-    $files[] = __DIR__ . '/../ai-radar-secret.php';
+    foreach (radar_private_dirs() as $dir) $files[] = $dir . '/ai-radar-secret.php';
   }
   foreach ($files as $file) {
     if (is_file($file)) {
@@ -91,9 +109,9 @@ function config(): array {
   // on a shared host can reset them; the system's temporary folder only when that is not writable.
   if ($cfg['state_dir'] === '') {
     $cfg['state_dir'] = sys_get_temp_dir() . '/ai-radar-llm';
-    $root = !empty($_SERVER['DOCUMENT_ROOT']) ? rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/../ai-radar-state' : '';
-    foreach ([$root, __DIR__ . '/../ai-radar-state'] as $place) {
-      if ($place !== '' && (is_dir($place) || @mkdir($place, 0700, true)) && is_writable($place)) { $cfg['state_dir'] = $place; break; }
+    foreach (radar_private_dirs() as $dir) {
+      $place = $dir . '/ai-radar-state';
+      if ((is_dir($place) || @mkdir($place, 0700, true)) && is_writable($place)) { $cfg['state_dir'] = $place; break; }
     }
   }
   return $cfg;

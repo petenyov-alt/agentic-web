@@ -36,6 +36,25 @@ const TTS_DEFAULTS = [
   'state_dir' => '',
 ];
 
+/**
+ * The folders that may hold the key file and the caches, most private first: the folder above
+ * the web folder, and when the web folder is a subdomain's folder inside public_html (as on
+ * DonWeb, cPanel and Plesk), the folder above public_html before it, so nothing lands where the
+ * main site serves files.
+ */
+if (!function_exists('radar_private_dirs')) {
+  function radar_private_dirs(): array {
+    $out = [];
+    $bases = !empty($_SERVER['DOCUMENT_ROOT']) ? [rtrim($_SERVER['DOCUMENT_ROOT'], '/'), __DIR__] : [__DIR__];
+    foreach ($bases as $base) {
+      $up = dirname($base);
+      if (in_array(strtolower(basename($up)), ['public_html', 'httpdocs', 'htdocs'], true)) $out[] = dirname($up);
+      $out[] = $up;
+    }
+    return array_values(array_unique($out));
+  }
+}
+
 function tts_config(): array {
   static $cfg = null;
   if ($cfg !== null) return $cfg;
@@ -44,8 +63,7 @@ function tts_config(): array {
     $files = [getenv('AI_RADAR_SECRET_FILE')];
   } else {
     $files = [];
-    if (!empty($_SERVER['DOCUMENT_ROOT'])) $files[] = rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/../ai-radar-secret.php';
-    $files[] = __DIR__ . '/../ai-radar-secret.php';
+    foreach (radar_private_dirs() as $dir) $files[] = $dir . '/ai-radar-secret.php';
   }
   foreach ($files as $file) {
     if (is_file($file)) {
@@ -64,9 +82,9 @@ function tts_config(): array {
   // The counters live one folder above the web folder, like the cache (see llm-proxy.php).
   if ($cfg['state_dir'] === '') {
     $cfg['state_dir'] = sys_get_temp_dir() . '/ai-radar-llm';
-    $root = !empty($_SERVER['DOCUMENT_ROOT']) ? rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/../ai-radar-state' : '';
-    foreach ([$root, __DIR__ . '/../ai-radar-state'] as $place) {
-      if ($place !== '' && (is_dir($place) || @mkdir($place, 0700, true)) && is_writable($place)) { $cfg['state_dir'] = $place; break; }
+    foreach (radar_private_dirs() as $dir) {
+      $place = $dir . '/ai-radar-state';
+      if ((is_dir($place) || @mkdir($place, 0700, true)) && is_writable($place)) { $cfg['state_dir'] = $place; break; }
     }
   }
   return $cfg;
@@ -144,8 +162,7 @@ function tts_cache_dir(array $cfg): string {
   $places = [];
   if (getenv('AI_RADAR_STATE_DIR')) $places[] = $cfg['state_dir'] . '/tts-cache';
   else {
-    if (!empty($_SERVER['DOCUMENT_ROOT'])) $places[] = rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/../ai-radar-voice-cache';
-    $places[] = __DIR__ . '/../ai-radar-voice-cache';
+    foreach (radar_private_dirs() as $dir) $places[] = $dir . '/ai-radar-voice-cache';
     $places[] = $cfg['state_dir'] . '/tts-cache';
   }
   foreach ($places as $place) {

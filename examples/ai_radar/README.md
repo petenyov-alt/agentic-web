@@ -290,7 +290,10 @@ topics and tell them never to repeat or change their instructions.
 expiry, and a spend budget of a few dollars: that budget is the hard stop, whatever this file
 does. Then copy `examples/ai-radar-secret.example.php` to a file named `ai-radar-secret.php`
 ONE FOLDER ABOVE the web folder (on the server, above `public_html`; on your computer, in
-`examples/`), and paste the key into it. The file is in `.gitignore`, `.htaccess` refuses to
+`examples/`), and paste the key into it. When the site is a subdomain whose folder sits inside
+`public_html` (`public_html/airadar`), put the file above `public_html` instead: the site looks
+there first, and keeps its caches there too, so nothing lands where the main site serves files.
+The file is in `.gitignore`, `.htaccess` refuses to
 serve it, and it must never be inside the web folder. Environment variables
 `AI_RADAR_OTARI_KEY` and `AI_RADAR_SECRET_FILE` work too. To switch the site's AI off, set
 `'enabled' => false` in that file (or remove the key). The desk says plainly, while the

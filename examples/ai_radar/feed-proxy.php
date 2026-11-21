@@ -41,10 +41,30 @@ function allowed_url(string $url, array $hosts): ?array {
   return in_array(strtolower($parts['host'] ?? ''), $hosts, true) ? $parts : null;
 }
 
+/**
+ * The folders that may hold the key file and the caches, most private first: the folder above
+ * the web folder, and when the web folder is a subdomain's folder inside public_html (as on
+ * DonWeb, cPanel and Plesk), the folder above public_html before it, so nothing lands where the
+ * main site serves files.
+ */
+if (!function_exists('radar_private_dirs')) {
+  function radar_private_dirs(): array {
+    $out = [];
+    $bases = !empty($_SERVER['DOCUMENT_ROOT']) ? [rtrim($_SERVER['DOCUMENT_ROOT'], '/'), __DIR__] : [__DIR__];
+    foreach ($bases as $base) {
+      $up = dirname($base);
+      if (in_array(strtolower(basename($up)), ['public_html', 'httpdocs', 'htdocs'], true)) $out[] = dirname($up);
+      $out[] = $up;
+    }
+    return array_values(array_unique($out));
+  }
+}
+
 /** Where the cache and the counters live: above the web folder when possible. */
 function state_dir(): string {
-  $root = !empty($_SERVER['DOCUMENT_ROOT']) ? rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/../ai-radar-state' : '';
-  foreach ([getenv('AI_RADAR_STATE_DIR') ?: '', $root, __DIR__ . '/../ai-radar-state'] as $place) {
+  $places = [getenv('AI_RADAR_STATE_DIR') ?: ''];
+  foreach (radar_private_dirs() as $dir) $places[] = $dir . '/ai-radar-state';
+  foreach ($places as $place) {
     if ($place !== '' && (is_dir($place) || @mkdir($place, 0700, true)) && is_writable($place)) return $place;
   }
   return sys_get_temp_dir() . '/ai-radar-llm';
