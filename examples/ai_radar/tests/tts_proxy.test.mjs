@@ -65,10 +65,10 @@ async function site(env) {
   throw new Error("PHP did not start.");
 }
 
-function send(base, path, body, { method = "POST", origin = base } = {}) {
+function send(base, path, body, { method = "POST", origin = base, headers = {} } = {}) {
   return new Promise((resolve, reject) => {
     const data = JSON.stringify(body);
-    const h = origin ? { Origin: origin } : {};
+    const h = { ...(origin ? { Origin: origin } : {}), ...headers };
     if (method === "POST") { h["Content-Type"] = "application/json"; h["Content-Length"] = Buffer.byteLength(data); }
     const req = http.request(new URL(path, base), { method, headers: h }, (res) => {
       const parts = [];
@@ -107,6 +107,39 @@ test("the studio voices speak with the site's key, each anchor in its own voice,
   assert.equal(again.headers["x-voice-source"], "cache");
   assert.deepEqual(again.buf, MP3);
   assert.equal(dg.seen.length, 2);
+});
+
+test("each made sentence gets its own address on this site, which phones play in pieces", { skip: !HAS_PHP && "php is not installed" }, async () => {
+  const dg = await fakeDeepgram();
+  const base = await site({ AI_RADAR_DEEPGRAM_KEY: KEY, AI_RADAR_TTS_UPSTREAM: dg.url });
+  const made = await send(base, PATH, { text: "Gemini 4 Neon is out.", anchor: "theo", link: true });
+  assert.equal(made.status, 200);
+  const { clip } = JSON.parse(made.text);
+  assert.match(clip, /^[0-9a-f]{40}$/);
+
+  // The audio element asks with no Origin header (and phones ask for a few bytes first).
+  const whole = await send(base, `${PATH}?clip=${clip}`, null, { method: "GET", origin: "" });
+  assert.equal(whole.status, 200);
+  assert.equal(whole.headers["content-type"], "audio/mpeg");
+  assert.equal(whole.headers["accept-ranges"], "bytes");
+  assert.match(whole.headers["cache-control"], /immutable/);
+  assert.deepEqual(whole.buf, MP3);
+  const first = await send(base, `${PATH}?clip=${clip}`, null, { method: "GET", origin: "", headers: { Range: "bytes=0-1" } });
+  assert.equal(first.status, 206);
+  assert.equal(first.headers["content-range"], `bytes 0-1/${MP3.length}`);
+  assert.equal(first.buf.length, 2);
+  const rest = await send(base, `${PATH}?clip=${clip}`, null, { method: "GET", origin: "", headers: { Range: "bytes=100-" } });
+  assert.equal(rest.status, 206);
+  assert.equal(rest.buf.length, MP3.length - 100);
+  assert.equal((await send(base, `${PATH}?clip=${clip}`, null, { method: "GET", origin: "", headers: { Range: "bytes=999-" } })).status, 416);
+
+  // Asking again links the cached sentence; Deepgram is not asked twice.
+  assert.equal(JSON.parse((await send(base, PATH, { text: "Gemini 4 Neon is out.", anchor: "theo", link: true })).text).clip, clip);
+  assert.equal(dg.seen.length, 1);
+  // Only sentences the site already made are served: nothing new is made from an address.
+  assert.equal((await send(base, `${PATH}?clip=${"0".repeat(40)}`, null, { method: "GET", origin: "" })).status, 404);
+  assert.equal((await send(base, `${PATH}?clip=../ai-radar-secret`, null, { method: "GET", origin: "" })).status, 404);
+  assert.equal(dg.seen.length, 1);
 });
 
 test("the studio voices refuse other sites, other voices and long or empty text", { skip: !HAS_PHP && "php is not installed" }, async () => {

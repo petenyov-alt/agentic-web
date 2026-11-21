@@ -1,4 +1,4 @@
-// AI Radar's studio: South Park construction-paper cutout TV news studio at night.
+// AI Radar's studio: construction-paper cutout TV news studio at night.
 // Hierarchical SVG cutout rig (1280x720 vector stage, native 60-FPS dt-smoothed cutout motion):
 //
 //   THEO   ("Theo Sweep", right, index 0): Unbuttoned tailored deep navy blazer over a
@@ -150,7 +150,7 @@ function lerp(a, b, k) {
 }
 
 // =========================================================================
-// 1. 14-VISEME PHONEME-ACCURATE SOUTH PARK MOUTH LIBRARY
+// 1. 14-VISEME PHONEME-ACCURATE CUTOUT MOUTH LIBRARY
 // =========================================================================
 export const VISEMES = {
   neutral: `
@@ -1120,7 +1120,7 @@ function buildStudioSvgMarkup() {
                     <path d="M -70 -20 C -74 -58, -50 -86, 0 -86 C 50 -86, 74 -58, 70 -20 C 66 -38, 48 -52, 22 -52 C 10 -46, 0 -38, 0 -38 C 0 -38, -10 -46, -22 -52 C -48 -52, -66 -38, -70 -20 Z" fill="#292524" stroke="#090d16" stroke-width="2.4" stroke-linejoin="round" />
                     <path d="M -38 -62 Q -4 -76 34 -60 Q 10 -50 -16 -52 Z" fill="#44403c" opacity="0.85" />
                   </g>
-                  <!-- Clipped South Park Eyes (Zero Orange Bars When Open!) -->
+                  <!-- Clipped Cutout Eyes (Zero Orange Bars When Open!) -->
                   <g transform="translate(0, -6)">
                     <ellipse cx="-19" cy="0" rx="19" ry="22" transform="rotate(-10 -19 0)" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.6" />
                     <ellipse cx="19" cy="0" rx="19" ry="22" transform="rotate(10 19 0)" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.6" />
@@ -1187,7 +1187,7 @@ function buildStudioSvgMarkup() {
                     <path d="M -72 -18 C -79 -70, -42 -93, 7 -90 C 52 -90, 79 -66, 72 -14 C 67 -32, 52 -46, 28 -49 C 7 -44, -20 -49, -44 -44 C -58 -38, -67 -26, -72 -18 Z" fill="#5c3a21" stroke="#3e2716" stroke-width="2.4" stroke-linejoin="round" />
                     <path d="M -46 -56 Q -22 -74 6 -66 Q 32 -76 52 -54 Q 20 -52 -14 -48 Z" fill="#6f4729" opacity="0.9" />
                   </g>
-                  <!-- Clipped South Park Eyes (Zero Orange Bars When Open!) -->
+                  <!-- Clipped Cutout Eyes (Zero Orange Bars When Open!) -->
                   <g transform="translate(0, -6)">
                     <ellipse cx="-19" cy="0" rx="19" ry="22.5" transform="rotate(-8 -19 0)" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.6" />
                     <ellipse cx="19" cy="0" rx="19" ry="22.5" transform="rotate(8 19 0)" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.6" />

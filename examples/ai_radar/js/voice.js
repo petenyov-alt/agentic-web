@@ -49,6 +49,30 @@ const MALE_RANKS = [
   /\b(rishi|lee|fred)\b/i,
 ];
 
+// Open the site with ?voicedebug to see each voice step in a box at the bottom of the page:
+// for checking a phone that cannot be inspected any other way.
+const VOICE_DEBUG = typeof location !== "undefined" && /[?&#]voicedebug\b/.test(`${location.search}${location.hash}`);
+function note(message) {
+  if (!VOICE_DEBUG || typeof document === "undefined" || !document.body) return;
+  let box = document.getElementById("voice-debug");
+  if (!box) {
+    box = document.createElement("pre");
+    box.id = "voice-debug";
+    box.style.cssText = "position:fixed;left:8px;right:8px;bottom:8px;z-index:99999;max-height:40vh;overflow:auto;margin:0;padding:8px;background:rgba(0,0,0,.88);color:#9f9;font:11px/1.4 ui-monospace,monospace;white-space:pre-wrap;border-radius:6px;pointer-events:none";
+    box.textContent = navigator.userAgent;
+    document.body.appendChild(box);
+  }
+  const lines = box.textContent.split("\n");
+  box.textContent = [lines[0], `${new Date().toTimeString().slice(0, 8)} ${message}`, ...lines.slice(1)].slice(0, 30).join("\n");
+}
+
+/** MP3 bytes as a data: URL (built in slices, so a long clip never overflows the call stack). */
+function audioDataUrl(bytes) {
+  let binary = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return `data:audio/mpeg;base64,${btoa(binary)}`;
+}
+
 // A moment of silence, for unlocking the audio element inside a click.
 const SILENT_WAV = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQQAAACAgICA";
 
@@ -73,7 +97,10 @@ export class VoiceOver extends EventTarget {
     this._endChunk = null;    // ends the current chunk early (used when muting/unmuting)
     // Studio voices (tts-proxy.php, Deepgram): null until connectCloud finds them available.
     this.cloud = null;        // {url, failures, offUntil}
-    this._audio = null;       // one <audio> element, unlocked by the first click
+    // One <audio> element, made now so the first tap can unlock it even before the studio
+    // voices answer; _audioReady turns true once the browser has let it play.
+    this._audio = typeof Audio !== "undefined" ? new Audio() : null;
+    this._audioReady = false;
     this._clips = new Map();  // "anchor\ntext" -> Promise<object URL>, the last few sentences
     if (this.supported) {
       this._loadVoices();
@@ -137,6 +164,8 @@ export class VoiceOver extends EventTarget {
     muted = Boolean(muted);
     if (muted === this.muted) return;
     this.muted = muted;
+    // Sound back on: studio voices that were resting get another chance at once.
+    if (!muted && this.cloud) { this.cloud.offUntil = 0; this.cloud.failures = 0; }
     if (!this.speaking) return;
     this._clearTimers();
     if (this.supported) synth.cancel();
@@ -170,11 +199,13 @@ export class VoiceOver extends EventTarget {
 
   /** Must run inside a user gesture once, so later speech is allowed. */
   unlock() {
-    // The audio element too: Safari lets an element play later only if a click started it once.
-    if (this._audio && !this._audio.src) {
+    // The audio element too: phones (Safari, Chrome on Android) let an element play later only
+    // if a tap started it once. Until the browser has let it play, every tap tries again, even
+    // when the element already holds a sentence the browser refused.
+    if (this._audio && !this._audioReady) {
       try {
         this._audio.src = SILENT_WAV;
-        this._audio.play()?.catch?.(() => {});
+        this._audio.play()?.then?.(() => { this._audioReady = true; note("tap: audio unlocked"); }, (e) => note(`tap: unlock play ${e?.name}`));
       } catch { /* ignore */ }
     }
     if (!this.supported) return;
@@ -221,7 +252,10 @@ export class VoiceOver extends EventTarget {
         if (studio && i === 0) this.prefetch(text, anchor);   // every sentence, in order, while the first plays
         if (this.muted || (!this.supported && !studio)) await this._silentChunk(chunk, token);
         else if (studio && await this._cloudChunk(chunk, token, anchor)) { /* played */ }
-        else if (token === this._token && !this.muted && this.supported) await this._speakChunk(chunk, token);
+        else if (token === this._token && !this.muted && this.supported) {
+          note(`robot voice (studio ${!anchor ? "not asked" : !this.cloud ? "off" : this.cloudReady ? "failed" : "resting"})`);
+          await this._speakChunk(chunk, token);
+        }
         else if (token === this._token) await this._silentChunk(chunk, token);
       }
     } catch {
@@ -302,7 +336,7 @@ export class VoiceOver extends EventTarget {
     if (!this.cloud) return { made: 0, failed: 0 };
     const jobs = [];
     // The same words as on air (see _clip), so the server's cache has them.
-    for (const { anchor, text } of lines) for (const chunk of chunkScript(text)) if (chunk.text.trim()) jobs.push({ anchor, text: forSpeech(chunk.text.trim()) });
+    for (const { anchor, text } of lines) for (const chunk of chunkScript(text)) if (chunk.text.trim()) jobs.push({ anchor, text: forSpeech(chunk.text.trim()), link: true });
     let made = 0, failed = 0, next = 0;
     const worker = async () => {
       while (next < jobs.length) {
@@ -317,25 +351,36 @@ export class VoiceOver extends EventTarget {
     return { made, failed };
   }
 
-  /** The studio audio for one sentence, as an object URL. Each sentence is fetched once. */
+  /**
+   * Where the studio audio for one sentence plays from. Each sentence is asked for once.
+   * The server makes it and answers with its own address on this site (tts-proxy.php?clip=…):
+   * Safari on iPhone plays audio reliably only from a plain address, and every host's
+   * security policy allows one from the same site. A server that cannot keep the sentence
+   * sends the audio itself, which then plays from a data: URL (hosts' policies often block blob:).
+   */
   _clip(text, anchor) {
     const key = `${anchor}\n${text.trim()}`;
     if (this._clips.has(key)) return this._clips.get(key);
-    const promise = fetch(this.cloud.url, {
+    const url = this.cloud.url;
+    const promise = fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: forSpeech(text.trim()), anchor }),
+      body: JSON.stringify({ text: forSpeech(text.trim()), anchor, link: true }),
     }).then(async (answer) => {
       if (!answer.ok) throw new Error(`studio voice ${answer.status}`);
-      return URL.createObjectURL(await answer.blob());
+      if (/json/i.test(answer.headers.get("Content-Type") || "")) {
+        const { clip } = await answer.json();
+        if (!/^[0-9a-f]{40}$/.test(String(clip))) throw new Error("studio voice: no clip");
+        return `${url}${url.includes("?") ? "&" : "?"}clip=${clip}`;
+      }
+      return audioDataUrl(new Uint8Array(await answer.arrayBuffer()));
     });
     promise.catch(() => this._clips.delete(key));
     this._clips.set(key, promise);
-    // Keep the last 120 sentences (a few minutes of broadcast); let the browser free the older ones.
+    // Keep the last 120 sentences (a few minutes of broadcast); the older ones are let go.
     while (this._clips.size > 120) {
       const [oldest, old] = this._clips.entries().next().value;
       this._clips.delete(oldest);
-      old.then((u) => URL.revokeObjectURL(u), () => {});
     }
     return promise;
   }
@@ -348,7 +393,8 @@ export class VoiceOver extends EventTarget {
     let src;
     try {
       src = await this._clip(chunk.text, anchor);
-    } catch {
+    } catch (error) {
+      note(`studio clip failed: ${error?.message}`);
       this._cloudFailed();
       return false;
     }
@@ -357,9 +403,11 @@ export class VoiceOver extends EventTarget {
     const audio = this._audio;
     return new Promise((resolve) => {
       let settled = false;
+      let stall = null;
       const finish = (played) => {
         if (settled) return;
         settled = true;
+        clearTimeout(stall);
         audio.onended = audio.onerror = audio.onloadedmetadata = null;
         this._endChunk = null;
         resolve(played);
@@ -371,12 +419,31 @@ export class VoiceOver extends EventTarget {
         this._estimateWords(chunk, token, ms);
       };
       audio.onended = () => { this.cloud.failures = 0; finish(true); };
-      audio.onerror = () => { this._cloudFailed(); finish(false); };
+      audio.onerror = () => { note(`studio audio error ${audio.error?.code ?? ""}`); this._cloudFailed(); finish(false); };
       audio.src = src;
       audio.volume = this.volume;
       audio.playbackRate = this.rate;
       const playing = audio.play();
-      playing?.catch?.(() => { this._cloudFailed(); finish(false); });
+      playing?.then?.(() => {
+        this._audioReady = true;
+        note(`studio playing (${String(src).startsWith("data:") ? "data" : "address"})`);
+        // Some phones say "playing" and then never move: after 5 silent seconds the browser
+        // voice reads the sentence instead of the broadcast standing still.
+        stall = setTimeout(() => {
+          if (settled || audio.currentTime > 0) return;
+          note("studio audio stalled");
+          audio.pause();
+          this._cloudFailed();
+          finish(false);
+        }, 5000);
+      }, (error) => {
+        note(`studio play refused: ${error?.name}`);
+        // The browser refused to play before a tap: not the server's fault, so the studio
+        // voices stay on, and the next tap unlocks the element again.
+        if (error?.name === "NotAllowedError") this._audioReady = false;
+        else this._cloudFailed();
+        finish(false);
+      });
     });
   }
 
@@ -384,6 +451,7 @@ export class VoiceOver extends EventTarget {
     if (!this.cloud) return;
     this.cloud.failures += 1;
     if (this.cloud.failures >= 3) {
+      note("studio voices rest for 5 minutes");
       this.cloud.offUntil = Date.now() + 5 * 60 * 1000;
       this.cloud.failures = 0;
     }

@@ -824,6 +824,8 @@ class StudioTest {
     assert.equal(cards[0].peerLabel, "Exa web search");
     assert.equal(cards[0].alwaysFirst, true, "The first button approves research for the visit.");
     assert.equal(cards[0].alwaysLabel, "Allow research for this visit");
+    // The card says that button covers all four research servers, each by its address.
+    for (const host of ["mcp.exa.ai", "huggingface.co", "mcp.deepwiki.com", "mcp.context7.com"]) assert.ok(cards[0].alwaysNote.includes(host), host);
     // That one answer covers the other research servers: no more cards this visit.
     for (const host of ["huggingface.co", "mcp.deepwiki.com", "mcp.context7.com"]) {
       assert.equal(await engine.requestConsent({ kind: "mcp", phase: "call", peerOrigin: host, peerLabel: "Destination service" }), "allow");

@@ -1369,6 +1369,7 @@ export class StudioPage {
   }
 
   setMuted(muted) {
+    if (!muted) this.voice.unlock(); // a tap on Sound on allows speech on phones too
     this.voice.setMuted(muted);
     this._changed();
     this._showVolume();

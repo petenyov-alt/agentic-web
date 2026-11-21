@@ -66,3 +66,80 @@ test("the studio voices get the spoken words, both on air and when warming up", 
     globalThis.fetch = realFetch;
   }
 });
+
+// A stand-in for the browser's <audio> element: play() is refused until a tap allows it.
+class FakeAudio {
+  constructor() { this.src = ""; this.allowed = false; this.plays = []; }
+  play() {
+    this.plays.push(this.src);
+    if (!this.allowed) { const e = new Error("blocked"); e.name = "NotAllowedError"; return Promise.reject(e); }
+    setTimeout(() => this.onended?.(), 0);
+    return Promise.resolve();
+  }
+  pause() {}
+}
+
+test("on a phone, audio the browser blocks does not switch the studio voices off", async () => {
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async () => new Response(new Uint8Array(200), { status: 200, headers: { "Content-Type": "audio/mpeg" } });
+  try {
+    const voice = new VoiceOver();
+    voice.cloud = { url: "tts-proxy.php", failures: 0, offUntil: 0 };
+    voice._audio = new FakeAudio();
+    // The page played a sentence before any tap: the browser refuses, three times over.
+    for (let i = 0; i < 3; i++) assert.equal(await voice._cloudChunk({ text: "Hello there.", offset: 0 }, voice._token, "dex"), false);
+    assert.equal(voice.cloudReady, true, "A refusal by the browser is not the server failing.");
+    // A tap unlocks the element, even though it already holds the refused sentence.
+    voice.unlock();
+    assert.equal(voice._audio.plays.at(-1).startsWith("data:audio/wav"), true, "The tap plays the silent sound.");
+    voice._audio.allowed = true;
+    assert.equal(await voice._cloudChunk({ text: "Hello there.", offset: 0 }, voice._token, "dex"), true, "After the tap the studio voice plays.");
+  } finally {
+    globalThis.fetch = realFetch;
+  }
+});
+
+test("studio audio plays from the sentence's own address on this site, as iPhones need", async () => {
+  const realFetch = globalThis.fetch;
+  const asked = [];
+  const id = "a".repeat(40);
+  globalThis.fetch = async (url, init) => {
+    asked.push(JSON.parse(init.body));
+    return new Response(JSON.stringify({ ok: true, clip: id }), { status: 200, headers: { "Content-Type": "application/json; charset=utf-8" } });
+  };
+  try {
+    const voice = new VoiceOver();
+    voice.cloud = { url: "tts-proxy.php", failures: 0, offUntil: 0 };
+    assert.equal(await voice._clip("Hello there.", "dex"), `tts-proxy.php?clip=${id}`);
+    assert.equal(asked[0].link, true);
+    voice._audio = new FakeAudio();
+    voice._audio.allowed = true;
+    assert.equal(await voice._cloudChunk({ text: "Hello there.", offset: 0 }, voice._token, "dex"), true);
+    assert.equal(voice._audio.plays.at(-1), `tts-proxy.php?clip=${id}`);
+  } finally {
+    globalThis.fetch = realFetch;
+  }
+});
+
+test("without an address from the server, studio audio plays from a data: URL (hosts' security policies often block blob:)", async () => {
+  const realFetch = globalThis.fetch;
+  const bytes = new Uint8Array(70000).map((_, i) => (i * 7) & 255);
+  globalThis.fetch = async () => new Response(bytes, { status: 200, headers: { "Content-Type": "audio/mpeg" } });
+  try {
+    const voice = new VoiceOver();
+    voice.cloud = { url: "tts-proxy.php", failures: 0, offUntil: 0 };
+    const src = await voice._clip("Hello there.", "dex");
+    assert.equal(src.startsWith("data:audio/mpeg;base64,"), true, src.slice(0, 40));
+    assert.deepEqual(new Uint8Array(Buffer.from(src.split(",")[1], "base64")), bytes, "The audio arrives whole.");
+  } finally {
+    globalThis.fetch = realFetch;
+  }
+});
+
+test("turning the sound back on gives resting studio voices another chance", () => {
+  const voice = new VoiceOver();
+  voice.cloud = { url: "tts-proxy.php", failures: 0, offUntil: Date.now() + 60000 };
+  voice.setMuted(true);
+  voice.setMuted(false);
+  assert.equal(voice.cloudReady, true);
+});

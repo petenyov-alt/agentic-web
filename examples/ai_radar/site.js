@@ -789,6 +789,7 @@ export class Producer {
         requestText: info.phase === "discover" ? "See which tools it offers" : info.requestText,
         alwaysFirst: true,
         alwaysLabel: "Allow research for this visit",
+        alwaysNote: `"Allow research for this visit" approves all four research servers until you close this tab: ${Object.keys(RESEARCH_HOSTS).join(", ")}.`,
         allowLabel: "Just this once",
       };
       const decision = askVisitor ? await askVisitor(shown) : "allow";

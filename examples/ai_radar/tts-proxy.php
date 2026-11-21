@@ -19,6 +19,8 @@
 //   'deepgram_key' => '...',
 // The environment variable AI_RADAR_DEEPGRAM_KEY works too. GET /tts-proxy.php?status tells
 // the page whether the voices are available. It never shows the key. PHP 7.4+, with cURL.
+// POST with "link": true answers {"clip": id} instead of the audio; GET ?clip=id then serves
+// that already-made sentence (in pieces, for phones). A GET never makes a new sentence.
 
 ini_set('display_errors', '0');
 
@@ -190,6 +192,53 @@ function tts_send_audio(string $audio, string $source): void {
   exit;
 }
 
+/** The page asked for a link instead of the audio: the sentence's own address on this site. */
+function tts_send_link(string $file): void {
+  while (ob_get_level()) ob_end_clean();
+  http_response_code(200);
+  header('Content-Type: application/json; charset=utf-8');
+  header('Cache-Control: no-store');
+  header('X-Content-Type-Options: nosniff');
+  echo json_encode(['ok' => true, 'clip' => basename($file, '.mp3')]);
+  exit;
+}
+
+/**
+ * GET ?clip=<id>: a sentence the site already made, for the page's audio element. Phones
+ * (Safari on iPhone above all) play audio best from a plain address on the same site, which
+ * every security policy allows, and fetch it in pieces (Range requests), so pieces are served.
+ * Nothing is ever made here: an unknown id is a 404, so this costs no voice allowance.
+ */
+function tts_serve_clip(array $cfg, string $id, string $method): void {
+  if (!preg_match('/^[0-9a-f]{40}$/', $id)) tts_error(404, 'That sentence is not here.', 'not_found');
+  $file = tts_cache_dir($cfg) . '/' . $id . '.mp3';
+  $size = is_file($file) ? (int) filesize($file) : 0;
+  if ($size < 1) tts_error(404, 'That sentence is not here (any more).', 'not_found');
+  $start = 0;
+  $end = $size - 1;
+  $partial = false;
+  if (preg_match('/^bytes=(\d*)-(\d*)$/', trim((string) ($_SERVER['HTTP_RANGE'] ?? '')), $m) && ($m[1] !== '' || $m[2] !== '')) {
+    if ($m[1] === '') $start = max(0, $size - (int) $m[2]);          // the last N bytes
+    else { $start = (int) $m[1]; if ($m[2] !== '') $end = min($end, (int) $m[2]); }
+    if ($start > $end) tts_error(416, 'That part of the sentence does not exist.', 'bad_range', ["Content-Range: bytes */$size"]);
+    $partial = true;
+  }
+  while (ob_get_level()) ob_end_clean();
+  http_response_code($partial ? 206 : 200);
+  header('Content-Type: audio/mpeg');
+  header('Accept-Ranges: bytes');
+  header('Content-Length: ' . ($end - $start + 1));
+  if ($partial) header("Content-Range: bytes $start-$end/$size");
+  // The id is the sentence's fingerprint: the same address always holds the same audio.
+  header('Cache-Control: public, max-age=604800, immutable');
+  header('ETag: "' . $id . '"');
+  header('X-Content-Type-Options: nosniff');
+  if ($method === 'HEAD') exit;
+  $fh = fopen($file, 'rb');
+  if ($fh) { fseek($fh, $start); echo fread($fh, $end - $start + 1); fclose($fh); }
+  exit;
+}
+
 // ---- main ----------------------------------------------------------------------------
 
 $cfg = tts_config();
@@ -203,6 +252,7 @@ if ($method === 'GET' && isset($_GET['status'])) {
   echo json_encode(['ok' => true, 'available' => $available, 'anchors' => array_keys($cfg['tts_voices'])]);
   exit;
 }
+if (($method === 'GET' || $method === 'HEAD') && isset($_GET['clip'])) tts_serve_clip($cfg, (string) $_GET['clip'], $method);
 if ($method === 'OPTIONS') { http_response_code(204); exit; }
 if ($method !== 'POST') tts_error(405, 'Use POST.', 'method_not_allowed', ['Allow: POST']);
 
@@ -223,8 +273,10 @@ if ($chars > $cfg['tts_max_text']) tts_error(413, 'Send at most ' . $cfg['tts_ma
 
 $model = $cfg['tts_voices'][$anchor];
 $cached = tts_cache_dir($cfg) . '/' . sha1($model . "\n" . $text) . '.mp3';
+$link = !empty($req['link']);   // the page wants the sentence's address, not the audio
 if (is_file($cached) && filesize($cached) > 0) {
   @touch($cached);
+  if ($link) tts_send_link($cached);
   tts_send_audio((string) file_get_contents($cached), 'cache');
 }
 
@@ -267,4 +319,6 @@ if ($status !== 200 || stripos($type, 'audio/') !== 0 || strlen($audio) < 100) {
 // Save atomically, so a visitor never gets half a file.
 $tmp = $cached . '.' . getmypid() . '.tmp';
 if (@file_put_contents($tmp, $audio) !== false) @rename($tmp, $cached);
+// Without a cache folder there is no address to give: the audio itself goes back instead.
+if ($link && is_file($cached)) tts_send_link($cached);
 tts_send_audio($audio, 'deepgram');

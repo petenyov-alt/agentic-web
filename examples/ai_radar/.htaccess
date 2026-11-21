@@ -29,6 +29,12 @@ Options -Indexes
     Header always set Cache-Control "public, max-age=300"
   </FilesMatch>
 
+  # The page and its code: browsers check for a newer copy on every visit (a quick 304 when
+  # nothing changed), so a fix reaches every visitor as soon as it is uploaded.
+  <FilesMatch "\.(html|js|mjs|css)$">
+    Header always set Cache-Control "no-cache"
+  </FilesMatch>
+
   # The runtime's sandbox for coded tools runs with no network and no extra scripts.
   <Files "sandbox-worker.js">
     Header always set Content-Security-Policy "default-src 'none'; script-src blob:; connect-src 'none'; worker-src 'none'"

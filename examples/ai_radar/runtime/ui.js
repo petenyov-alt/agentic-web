@@ -973,6 +973,8 @@ export function mountApp(root, { engine, trace, manifest, connect = null }) {
       `<div class="ns-consent-title">🔗 Contact <b>${escapeHtml(info.peerLabel)}</b> on your behalf?</div>` +
       `<div class="ns-consent-sub">${escapeHtml(info.peerOrigin)}${tokens ? " · est. " + escapeHtml(tokens) + escapeHtml(cost) : ""}</div>` +
       (info.requestText ? `<div class="ns-consent-req">“${escapeHtml(info.requestText.slice(0, 140))}”</div>` : "") +
+      // AI Radar: when "always" covers more than this origin, the card says which ones.
+      (info.alwaysNote ? `<div class="ns-consent-sub">${escapeHtml(info.alwaysNote)}</div>` : "") +
       `<div class="ns-consent-actions">` +
         // AI Radar: the page may name the buttons and put "always" first (info.alwaysFirst).
         (info.alwaysFirst
